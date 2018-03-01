@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyNextMovie</string>
+    <string name="poster_desc">Cartaz do filme</string>
+    <string name="orderby">Ordernar por</string>
+    <string name="popular">Mais popular</string>
+    <string name="best_rated">Melhor avaliado</string>
+</resources>
