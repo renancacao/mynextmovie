@@ -5,22 +5,31 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener{
+
+    private String TAG = getClass().getName();
 
     private RecyclerView rcMovies;
     private ProgressBar pgLoading;
 
     private String order = "popular";
     private MovieAdapter adapter;
-    private ArrayList<MyMovie> movies;
+    private ArrayList<MyMovie> myMovies;
 
 
     @Override
@@ -35,13 +44,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         rcMovies.setLayoutManager(grid);
         rcMovies.setHasFixedSize(true);
 
-        movies= new ArrayList<>();
+        myMovies = new ArrayList<>();
 
-        adapter = new MovieAdapter(this, movies, this);
+        adapter = new MovieAdapter(this, myMovies, this);
 
+        rcMovies.setAdapter(adapter);
+
+        carregoFilmes(order);
 
     }
 
+    private void carregoFilmes(String order){
+
+        URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
+        new MoviesQueryTask().execute(dbMovieUrl);
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,9 +73,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         switch (item.getItemId()){
             case R.id.mnuPop:
                 order = "popular";
+                carregoFilmes(order);
+                break;
+
             case R.id.mnuRat:
                 order = "top_rated";
+                carregoFilmes(order);
+                break;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -78,15 +102,55 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         }
 
         @Override
-        protected String doInBackground(URL... urls) {
-            return null;
+        protected String doInBackground(URL... param) {
+
+            URL searchUrl = param[0];
+            String jsonMovies =  "";
+            try {
+                jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+            } catch (IOException e) {
+                Log.e(TAG,"Erro ao requerir filmes", e);
+            }
+
+            return jsonMovies;
+
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String jsonMovies) {
+            super.onPostExecute(jsonMovies);
             pgLoading.setVisibility(View.INVISIBLE);
+
+            if (!jsonMovies.isEmpty() && !jsonMovies.equals("")) {
+                myMovies = getMovies(jsonMovies);
+                adapter.setMovies(myMovies);
+                adapter.notifyDataSetChanged();
+            }
+
         }
+    }
+
+    private ArrayList<MyMovie> getMovies(String jsonString) {
+
+        ArrayList<MyMovie> movies = new ArrayList<>();
+
+        try {
+            JSONObject pageJson = new JSONObject(jsonString);
+            JSONArray resultsJSON = pageJson.getJSONArray("results");
+
+
+            JSONObject movieJson;
+
+            for (int i=0; i<resultsJSON.length();i++){
+                movieJson = new JSONObject(resultsJSON.getString(i));
+                movies.add(new MyMovie(movieJson));
+            }
+
+        } catch (JSONException e) {
+           Log.e(TAG,"Erro ao decodificar JSON", e);
+        }
+
+        return movies;
     }
 
 

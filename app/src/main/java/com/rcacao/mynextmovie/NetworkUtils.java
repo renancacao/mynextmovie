@@ -13,14 +13,14 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    static final String MYAUTH = INSIRA_A_KEY_AQUI;
+    final static String MYAUTH = MINHA_KEY_AQUI;
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
-    static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    static final String KEY_URL = "?api_key=";
+    final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    final static String KEY_URL = "api_key";
 
-    public static URL buidingUrl(String order){
+    public static URL buidingUrlDbMovies(String order){
 
         Uri builtUri = Uri.parse(BASE_URL + order).buildUpon()
                 .appendQueryParameter(KEY_URL,MYAUTH).build();
