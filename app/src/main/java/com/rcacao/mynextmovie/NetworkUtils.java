@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    final static String MYAUTH = MINHA_KEY_AQUI;
+    final static String MYAUTH = MINHA KEY AQUI;
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 

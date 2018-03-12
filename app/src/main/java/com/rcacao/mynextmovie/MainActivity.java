@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener{
 
-    private String TAG = getClass().getName();
+    private final String TAG = getClass().getName();
 
     private RecyclerView rcMovies;
     private ProgressBar pgLoading;

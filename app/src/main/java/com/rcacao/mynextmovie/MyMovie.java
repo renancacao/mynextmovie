@@ -3,16 +3,19 @@ package com.rcacao.mynextmovie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Renan on 28/02/2018.
- */
+import java.io.Serializable;
+import java.util.Date;
 
-public class MyMovie {
+
+public class MyMovie implements Serializable {
 
     private int id;
     private String poster_path;
     private String original_title;
     private String title;
+    private String sinopse;
+    private Double avaliacao;
+    private String dataLancamento;
 
 
     MyMovie(JSONObject json) {
@@ -22,6 +25,9 @@ public class MyMovie {
             poster_path = json.getString("poster_path");
             original_title = json.getString("original_title");
             title = json.getString("title");
+            sinopse = json.getString("overview");
+            avaliacao = json.getDouble("vote_average");
+            dataLancamento = json.getString("release_date");
 
         } catch (JSONException e) {
             e.printStackTrace();
