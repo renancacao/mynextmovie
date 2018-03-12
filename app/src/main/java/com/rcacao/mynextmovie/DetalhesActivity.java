@@ -3,16 +3,24 @@ package com.rcacao.mynextmovie;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class DetalhesActivity extends AppCompatActivity {
 
+
+    TextView tTitulo, tLancamento, tAvaliacao, tSinopse;
+    ImageView imgPoster;
+
+    MyMovie filme = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes);
 
-        MyMovie filme = null;
 
         Intent i = getIntent();
         if (i.hasExtra("filme")){
@@ -23,11 +31,31 @@ public class DetalhesActivity extends AppCompatActivity {
             finish();
         }
 
+
+        tTitulo = findViewById(R.id.tTitulo);
+        tLancamento = findViewById(R.id.tLancamento);
+        tAvaliacao = findViewById(R.id.tAvaliacao);
+        tSinopse = findViewById(R.id.tSinopse);
+
+        imgPoster = findViewById(R.id.imgPoster);
+
+
         carregaFilme();
     }
 
     private void carregaFilme() {
 
+        Picasso.with(this).load(getPoster()).into(imgPoster);
+        tTitulo.setText(filme.getTitulo());
+        tAvaliacao.setText(String.valueOf(filme.getAvaliacao()));
+        tLancamento.setText(filme.getLancamento());
+        tSinopse.setText(filme.getSinopse());
+
+    }
+
+    private String getPoster() {
+
+        return Utils.URL_POSTER + Utils.TAMANHO + filme.getPoster();
     }
 
 

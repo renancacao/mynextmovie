@@ -20,14 +20,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
     private ArrayList<MyMovie> movies;
     private Context context;
 
-    private final String URL_POSTER = "http://image.tmdb.org/t/p/";
-    private final String TAMANHO = "w185/";
 
-    public void setMovies(ArrayList<MyMovie> movies) {
+
+    void setMovies(ArrayList<MyMovie> movies) {
         this.movies = movies;
     }
 
-    public MovieAdapter(Context context, ArrayList<MyMovie> movies, ListItemClickListener mOnClickListener) {
+    MovieAdapter(Context context, ArrayList<MyMovie> movies, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.movies = movies;
         this.mOnClickListener = mOnClickListener;
@@ -55,7 +54,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
     private String getPoster(int position) {
 
-        return URL_POSTER + TAMANHO + movies.get(position).getPoster_path();
+        return Utils.URL_POSTER + Utils.TAMANHO + movies.get(position).getPoster();
     }
 
     @Override

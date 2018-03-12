@@ -1,5 +1,6 @@
 package com.rcacao.mynextmovie;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private String order = "popular";
     private MovieAdapter adapter;
-    private ArrayList<MyMovie> myMovies;
+    private ArrayList<MyMovie> filmes;
 
 
     @Override
@@ -44,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         rcMovies.setLayoutManager(grid);
         rcMovies.setHasFixedSize(true);
 
-        myMovies = new ArrayList<>();
+        filmes = new ArrayList<>();
 
-        adapter = new MovieAdapter(this, myMovies, this);
+        adapter = new MovieAdapter(this, filmes, this);
 
         rcMovies.setAdapter(adapter);
 
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private void carregoFilmes(String order){
 
-        URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
+        URL dbMovieUrl = Utils.buidingUrlDbMovies(order);
         new MoviesQueryTask().execute(dbMovieUrl);
 
     }
@@ -88,7 +89,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(this,String.valueOf(clickedItemIndex),Toast.LENGTH_LONG).show();
+
+        //Toast.makeText(this,String.valueOf(clickedItemIndex),Toast.LENGTH_LONG).show();
+
+        Intent intent= new Intent(this, DetalhesActivity.class);
+        intent.putExtra("filme", filmes.get(clickedItemIndex));
+
+        startActivity(intent);
+
     }
 
 
@@ -107,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             URL searchUrl = param[0];
             String jsonMovies =  "";
             try {
-                jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+                jsonMovies = Utils.getResponseFromHttpUrl(searchUrl);
             } catch (IOException e) {
                 Log.e(TAG,"Erro ao requerir filmes", e);
             }
@@ -122,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             pgLoading.setVisibility(View.INVISIBLE);
 
             if (!jsonMovies.isEmpty() && !jsonMovies.equals("")) {
-                myMovies = getMovies(jsonMovies);
-                adapter.setMovies(myMovies);
+                filmes = getMovies(jsonMovies);
+                adapter.setMovies(filmes);
                 adapter.notifyDataSetChanged();
             }
 

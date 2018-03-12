@@ -10,15 +10,18 @@ import java.net.URL;
 import java.util.Scanner;
 
 
-public class NetworkUtils {
+public class Utils {
 
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    final static String MYAUTH = MINHA KEY AQUI;
+    final static String MYAUTH = MINHA KEY;
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
     final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
     final static String KEY_URL = "api_key";
+
+    static final String URL_POSTER = "http://image.tmdb.org/t/p/";
+    static final String TAMANHO = "w185/";
 
     public static URL buidingUrlDbMovies(String order){
 

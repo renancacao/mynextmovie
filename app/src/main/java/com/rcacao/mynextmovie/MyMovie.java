@@ -10,24 +10,21 @@ import java.util.Date;
 public class MyMovie implements Serializable {
 
     private int id;
-    private String poster_path;
-    private String original_title;
-    private String title;
+    private String poster;
+    private String titulo;
     private String sinopse;
     private Double avaliacao;
-    private String dataLancamento;
-
+    private String lancamento;
 
     MyMovie(JSONObject json) {
         try {
 
             id = json.getInt("id");
-            poster_path = json.getString("poster_path");
-            original_title = json.getString("original_title");
-            title = json.getString("title");
+            poster = json.getString("poster_path");
+            titulo = json.getString("original_title");
             sinopse = json.getString("overview");
             avaliacao = json.getDouble("vote_average");
-            dataLancamento = json.getString("release_date");
+            lancamento = json.getString("release_date");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -38,7 +35,23 @@ public class MyMovie implements Serializable {
         return id;
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    String getPoster() {
+        return poster;
+    }
+
+    String getTitulo() {
+        return titulo;
+    }
+
+    String getSinopse() {
+        return sinopse;
+    }
+
+    Double getAvaliacao() {
+        return avaliacao;
+    }
+
+    public String getLancamento() {
+        return lancamento;
     }
 }
