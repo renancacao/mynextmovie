@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,12 +24,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private final String TAG = getClass().getName();
 
-    private RecyclerView rcMovies;
     private ProgressBar pgLoading;
 
     private String order = "popular";
     private MovieAdapter adapter;
-    private ArrayList<MyMovie> filmes;
+    private ArrayList<Filme> filmes;
+
+    private MenuItem pop, rat;
 
 
     @Override
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rcMovies = findViewById(R.id.rcMovies);
+        RecyclerView rcMovies = findViewById(R.id.rcMovies);
         pgLoading = findViewById(R.id.pgLoading);
 
         GridLayoutManager grid = new GridLayoutManager(this,2);
@@ -65,21 +65,29 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        pop = menu.findItem(R.id.mnuPop);
+        rat = menu.findItem(R.id.mnuRat);
+        pop.setEnabled(false);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
         switch (item.getItemId()){
             case R.id.mnuPop:
                 order = "popular";
                 carregoFilmes(order);
+                pop.setEnabled(false);
+                rat.setEnabled(true);
                 break;
 
             case R.id.mnuRat:
                 order = "top_rated";
                 carregoFilmes(order);
+                pop.setEnabled(true);
+                rat.setEnabled(false);
                 break;
         }
 
@@ -138,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         }
     }
 
-    private ArrayList<MyMovie> getMovies(String jsonString) {
+    private ArrayList<Filme> getMovies(String jsonString) {
 
-        ArrayList<MyMovie> movies = new ArrayList<>();
+        ArrayList<Filme> movies = new ArrayList<>();
 
         try {
             JSONObject pageJson = new JSONObject(jsonString);
@@ -151,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
             for (int i=0; i<resultsJSON.length();i++){
                 movieJson = new JSONObject(resultsJSON.getString(i));
-                movies.add(new MyMovie(movieJson));
+                movies.add(new Filme(movieJson));
             }
 
         } catch (JSONException e) {

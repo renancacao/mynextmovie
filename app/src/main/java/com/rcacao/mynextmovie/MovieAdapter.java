@@ -17,16 +17,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
 
     final private ListItemClickListener mOnClickListener;
-    private ArrayList<MyMovie> movies;
-    private Context context;
+    private ArrayList<Filme> movies;
+    private final Context context;
 
 
 
-    void setMovies(ArrayList<MyMovie> movies) {
+    void setMovies(ArrayList<Filme> movies) {
         this.movies = movies;
     }
 
-    MovieAdapter(Context context, ArrayList<MyMovie> movies, ListItemClickListener mOnClickListener) {
+    MovieAdapter(Context context, ArrayList<Filme> movies, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.movies = movies;
         this.mOnClickListener = mOnClickListener;
@@ -64,7 +64,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
     public class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView imgPoster;
+        final ImageView imgPoster;
 
         PosterViewHolder(View itemView) {
             super(itemView);

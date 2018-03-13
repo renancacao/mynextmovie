@@ -4,4 +4,7 @@
     <string name="orderby">Ordernar por</string>
     <string name="popular">Mais popular</string>
     <string name="best_rated">Melhor avaliado</string>
+    <string name="avaliacao">Avaliação:</string>
+    <string name="lancamento">Lançamento:</string>
+    <string name="poster_do_filme">Poster do filme</string>
 </resources>

@@ -5,11 +5,12 @@
     <item android:title="@string/orderby" android:id="@+id/mnuOrder" android:orderInCategory="1"
         app:showAsAction="ifRoom" >
         <menu>
-            <item android:title="@string/popular" android:id="@+id/mnuPop" android:orderInCategory="101"
-                android:icon="@drawable/ic_whatshot_black_24dp" app:showAsAction="withText"/>
+                <item android:title="@string/popular" android:id="@+id/mnuPop" android:orderInCategory="101"
+                    android:icon="@drawable/ic_whatshot_black_24dp" app:showAsAction="withText"/>
 
-            <item android:title="@string/best_rated" android:id="@+id/mnuRat" android:orderInCategory="102"
-                android:icon="@drawable/ic_star_black_24dp" app:showAsAction="withText"/>
+                <item android:title="@string/best_rated" android:id="@+id/mnuRat" android:orderInCategory="102"
+                    android:icon="@drawable/ic_star_black_24dp" app:showAsAction="withText"/>
+
         </menu>
 
     </item>

@@ -4,10 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.util.Date;
 
 
-public class MyMovie implements Serializable {
+class Filme implements Serializable {
 
     private int id;
     private String poster;
@@ -16,7 +15,7 @@ public class MyMovie implements Serializable {
     private Double avaliacao;
     private String lancamento;
 
-    MyMovie(JSONObject json) {
+    Filme(JSONObject json) {
         try {
 
             id = json.getInt("id");
@@ -51,7 +50,7 @@ public class MyMovie implements Serializable {
         return avaliacao;
     }
 
-    public String getLancamento() {
+    String getLancamento() {
         return lancamento;
     }
 }

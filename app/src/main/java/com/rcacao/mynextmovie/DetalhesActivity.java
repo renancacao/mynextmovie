@@ -11,10 +11,10 @@ import com.squareup.picasso.Picasso;
 public class DetalhesActivity extends AppCompatActivity {
 
 
-    TextView tTitulo, tLancamento, tAvaliacao, tSinopse;
-    ImageView imgPoster;
+    private TextView tTitulo, tLancamento, tAvaliacao, tSinopse;
+    private ImageView imgPoster;
 
-    MyMovie filme = null;
+    private Filme filme = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         if (i.hasExtra("filme")){
-            filme = (MyMovie) i.getSerializableExtra("filme");
+            filme = (Filme) i.getSerializableExtra("filme");
         }
         else
         {

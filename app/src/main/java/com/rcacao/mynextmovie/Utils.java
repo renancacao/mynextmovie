@@ -10,20 +10,20 @@ import java.net.URL;
 import java.util.Scanner;
 
 
-public class Utils {
+class Utils {
 
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    final static String MYAUTH = MINHA KEY;
+    private final static String MYAUTH = KEY_AQUI;
     //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
-    final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    final static String KEY_URL = "api_key";
+    private final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    private final static String KEY_URL = "api_key";
 
     static final String URL_POSTER = "http://image.tmdb.org/t/p/";
     static final String TAMANHO = "w185/";
 
-    public static URL buidingUrlDbMovies(String order){
+    static URL buidingUrlDbMovies(String order){
 
         Uri builtUri = Uri.parse(BASE_URL + order).buildUpon()
                 .appendQueryParameter(KEY_URL,MYAUTH).build();
@@ -39,7 +39,7 @@ public class Utils {
         return url;
     }
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();
