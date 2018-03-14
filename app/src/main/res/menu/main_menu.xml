@@ -6,10 +6,11 @@
         app:showAsAction="ifRoom" >
         <menu>
                 <item android:title="@string/popular" android:id="@+id/mnuPop" android:orderInCategory="101"
-                    android:icon="@drawable/ic_whatshot_black_24dp" app:showAsAction="withText"/>
+                    android:icon="@drawable/ic_whatshot_white_24dp" app:showAsAction="withText"
+                    />
 
                 <item android:title="@string/best_rated" android:id="@+id/mnuRat" android:orderInCategory="102"
-                    android:icon="@drawable/ic_star_black_24dp" app:showAsAction="withText"/>
+                    android:icon="@drawable/ic_star_white_24dp" app:showAsAction="withText"/>
 
         </menu>
 

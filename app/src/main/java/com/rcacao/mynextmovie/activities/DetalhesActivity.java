@@ -1,18 +1,27 @@
-package com.rcacao.mynextmovie;
+package com.rcacao.mynextmovie.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rcacao.mynextmovie.R;
+import com.rcacao.mynextmovie.models.Filme;
+import com.rcacao.mynextmovie.network.NetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DetalhesActivity extends AppCompatActivity {
 
 
-    private TextView tTitulo, tLancamento, tAvaliacao, tSinopse;
-    private ImageView imgPoster;
+    @BindView(R.id.tTitulo) TextView tTitulo;
+    @BindView(R.id.tLancamento) TextView tLancamento;
+    @BindView(R.id.tAvaliacao) TextView tAvaliacao;
+    @BindView(R.id.tSinopse) TextView tSinopse;
+    @BindView(R.id.imgPoster) ImageView imgPoster;
 
     private Filme filme = null;
 
@@ -21,26 +30,19 @@ public class DetalhesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes);
 
+        ButterKnife.bind(this);
+
 
         Intent i = getIntent();
         if (i.hasExtra("filme")){
-            filme = (Filme) i.getSerializableExtra("filme");
+            filme = i.getParcelableExtra("filme");
         }
         else
         {
             finish();
         }
 
-
-        tTitulo = findViewById(R.id.tTitulo);
-        tLancamento = findViewById(R.id.tLancamento);
-        tAvaliacao = findViewById(R.id.tAvaliacao);
-        tSinopse = findViewById(R.id.tSinopse);
-
-        imgPoster = findViewById(R.id.imgPoster);
-
-
-        carregaFilme();
+           carregaFilme();
     }
 
     private void carregaFilme() {
@@ -55,7 +57,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
     private String getPoster() {
 
-        return Utils.URL_POSTER + Utils.TAMANHO + filme.getPoster();
+        return NetworkUtils.URL_POSTER + NetworkUtils.TAMANHO + filme.getPoster();
     }
 
 

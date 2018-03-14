@@ -1,6 +1,8 @@
-package com.rcacao.mynextmovie;
+package com.rcacao.mynextmovie.network;
 
 import android.net.Uri;
+
+import com.rcacao.mynextmovie.BuildConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,23 +12,19 @@ import java.net.URL;
 import java.util.Scanner;
 
 
-class Utils {
-
-    //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    private final static String MYAUTH = KEY_AQUI;
-    //REMOVER -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
+public class NetworkUtils {
 
     private final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
     private final static String KEY_URL = "api_key";
 
-    static final String URL_POSTER = "http://image.tmdb.org/t/p/";
-    static final String TAMANHO = "w185/";
+    public static final String URL_POSTER = "http://image.tmdb.org/t/p/";
+    public static final String TAMANHO = "w185/";
 
-    static URL buidingUrlDbMovies(String order){
+
+    public static URL buidingUrlDbMovies(String order){
 
         Uri builtUri = Uri.parse(BASE_URL + order).buildUpon()
-                .appendQueryParameter(KEY_URL,MYAUTH).build();
+                .appendQueryParameter(KEY_URL, BuildConfig.MYAUTH).build();
 
         URL url = null;
 
@@ -39,7 +37,7 @@ class Utils {
         return url;
     }
 
-    static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();

@@ -1,4 +1,4 @@
-package com.rcacao.mynextmovie;
+package com.rcacao.mynextmovie.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.rcacao.mynextmovie.models.Filme;
+import com.rcacao.mynextmovie.R;
+import com.rcacao.mynextmovie.network.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,11 +25,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
 
 
-    void setMovies(ArrayList<Filme> movies) {
+    public void setMovies(ArrayList<Filme> movies) {
         this.movies = movies;
     }
 
-    MovieAdapter(Context context, ArrayList<Filme> movies, ListItemClickListener mOnClickListener) {
+    public MovieAdapter(Context context, ArrayList<Filme> movies, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.movies = movies;
         this.mOnClickListener = mOnClickListener;
@@ -54,7 +57,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
     private String getPoster(int position) {
 
-        return Utils.URL_POSTER + Utils.TAMANHO + movies.get(position).getPoster();
+        return NetworkUtils.URL_POSTER + NetworkUtils.TAMANHO + movies.get(position).getPoster();
     }
 
     @Override

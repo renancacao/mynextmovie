@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#e53935</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="vermelhoClaro">#ff8a80</color>
+
+
     <color name="fundo_main">#000000</color>
     <color name="texto">#FFFFFF</color>
+    <color name="texto_disabled">#42000000</color>
 </resources>

@@ -1,6 +1,8 @@
-package com.rcacao.mynextmovie;
+package com.rcacao.mynextmovie.activities;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +12,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+
+import com.rcacao.mynextmovie.R;
+import com.rcacao.mynextmovie.adapters.MovieAdapter;
+import com.rcacao.mynextmovie.models.Filme;
+import com.rcacao.mynextmovie.network.NetworkUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,11 +28,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener{
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener {
 
     private final String TAG = getClass().getName();
 
-    private ProgressBar pgLoading;
+    @BindView(R.id.pgLoading) ProgressBar pgLoading;
+    @BindView(R.id.lytErro) LinearLayout lytErro;
+    @BindView(R.id.rcMovies) RecyclerView rcMovies;
 
     private String order = "popular";
     private MovieAdapter adapter;
@@ -38,10 +52,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView rcMovies = findViewById(R.id.rcMovies);
-        pgLoading = findViewById(R.id.pgLoading);
+        ButterKnife.bind(this);
 
-        GridLayoutManager grid = new GridLayoutManager(this,2);
+        rcMovies = findViewById(R.id.rcMovies);
+
+        //GridLayoutManager grid = new GridLayoutManager(this, Utils.getQtdColunas(this));
+        //nao gostei de como ficou.
+
+        GridLayoutManager grid = new GridLayoutManager(this, 2);
+
         rcMovies.setLayoutManager(grid);
         rcMovies.setHasFixedSize(true);
 
@@ -57,9 +76,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private void carregoFilmes(String order){
 
-        URL dbMovieUrl = Utils.buidingUrlDbMovies(order);
-        new MoviesQueryTask().execute(dbMovieUrl);
-
+        if(isOnline()){
+            rcMovies.setVisibility(View.VISIBLE);
+            lytErro.setVisibility(View.INVISIBLE);
+            URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
+            new MoviesQueryTask().execute(dbMovieUrl);
+        }
+        else{
+            rcMovies.setVisibility(View.INVISIBLE);
+            lytErro.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -89,6 +115,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                 pop.setEnabled(true);
                 rat.setEnabled(false);
                 break;
+
+            default:
+                break;
+
         }
 
 
@@ -120,12 +150,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         @Override
         protected String doInBackground(URL... param) {
 
+
             URL searchUrl = param[0];
-            String jsonMovies =  "";
+            String jsonMovies;
             try {
-                jsonMovies = Utils.getResponseFromHttpUrl(searchUrl);
+                jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
             } catch (IOException e) {
-                Log.e(TAG,"Erro ao requerir filmes", e);
+                Log.w(TAG,"Erro ao requerir filmes", e);
+                jsonMovies = "";
             }
 
             return jsonMovies;
@@ -141,6 +173,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                 filmes = getMovies(jsonMovies);
                 adapter.setMovies(filmes);
                 adapter.notifyDataSetChanged();
+            }
+            else
+            {
+                rcMovies.setVisibility(View.INVISIBLE);
+                lytErro.setVisibility(View.VISIBLE);
             }
 
         }
@@ -169,5 +206,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         return movies;
     }
 
+    public boolean isOnline() {
+        ConnectivityManager cm =(ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = null;
+        if (cm != null) {
+            netInfo = cm.getActiveNetworkInfo();
+        }
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @OnClick(R.id.bReconectar) void clickReconectar(){
+
+        carregoFilmes(order);
+
+    }
 
 }
