@@ -9,4 +9,9 @@
     <string name="poster_do_filme">Poster do filme</string>
     <string name="ops">Ops! Parece que o aplicativo não conseguiu se conectar à internet ou ao servidor!</string>
     <string name="tentar_novamente">Tentar novamente</string>
+    <string name="order_popular">popular</string>
+    <string name="order_top_rated">top_rated</string>
+    <string name="log_erro_requirir_filmes">Erro ao requerir filmes</string>
+    <string name="tag_movieprocessor">MovieProcessor</string>
+    <string name="erro_ler_json">Erro ao ler JSON</string>
 </resources>

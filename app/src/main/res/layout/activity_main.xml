@@ -7,7 +7,7 @@
     tools:context="com.rcacao.mynextmovie.activities.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcMovies"
+        android:id="@+id/recycleMovies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,17 +16,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/pgLoading"
+        android:id="@+id/progressBar"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/rcMovies"
+        app:layout_constraintStart_toEndOf="@+id/recycleMovies"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/lytErro"
+        android:id="@+id/linearLayoutErro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"

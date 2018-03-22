@@ -3,9 +3,6 @@ package com.rcacao.mynextmovie.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 public class Filme implements Parcelable {
 
@@ -16,19 +13,10 @@ public class Filme implements Parcelable {
     private Double avaliacao;
     private String lancamento;
 
-    public Filme(JSONObject json) {
-        try {
+    public static final String EXTRA_FILME = "filme";
 
-            id = json.getInt("id");
-            poster = json.getString("poster_path");
-            titulo = json.getString("original_title");
-            sinopse = json.getString("overview");
-            avaliacao = json.getDouble("vote_average");
-            lancamento = json.getString("release_date");
+    public Filme() {
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private Filme(Parcel in) {
@@ -80,6 +68,30 @@ public class Filme implements Parcelable {
         return lancamento;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
+    }
+
+    public void setAvaliacao(Double avaliacao) {
+        this.avaliacao = avaliacao;
+    }
+
+    public void setLancamento(String lancamento) {
+        this.lancamento = lancamento;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -99,4 +111,6 @@ public class Filme implements Parcelable {
         }
         parcel.writeString(lancamento);
     }
+
+
 }

@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.R;
-import com.rcacao.mynextmovie.network.NetworkUtils;
+import com.rcacao.mynextmovie.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -62,7 +62,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        if  (movies != null){
+            return movies.size();
+        }
+        else{
+            return 0;
+        }
     }
 
     public class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -3,28 +3,23 @@ package com.rcacao.mynextmovie.activities;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.rcacao.mynextmovie.utils.MovieService;
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.MovieAdapter;
+import com.rcacao.mynextmovie.interfaces.AsyncTaskDelegate;
 import com.rcacao.mynextmovie.models.Filme;
-import com.rcacao.mynextmovie.network.NetworkUtils;
+import com.rcacao.mynextmovie.utils.NetworkUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -32,19 +27,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskDelegate {
 
-    private final String TAG = getClass().getName();
+    @BindView(R.id.progressBar) ProgressBar progressBar;
+    @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
+    @BindView(R.id.recycleMovies) RecyclerView recycleMovies;
 
-    @BindView(R.id.pgLoading) ProgressBar pgLoading;
-    @BindView(R.id.lytErro) LinearLayout lytErro;
-    @BindView(R.id.rcMovies) RecyclerView rcMovies;
-
-    private String order = "popular";
+    private String order = "";
     private MovieAdapter adapter;
     private ArrayList<Filme> filmes;
 
     private MenuItem pop, rat;
+
 
 
     @Override
@@ -54,21 +48,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         ButterKnife.bind(this);
 
-        rcMovies = findViewById(R.id.rcMovies);
+        order = getString(R.string.order_popular);
+
+        recycleMovies = findViewById(R.id.recycleMovies);
 
         //GridLayoutManager grid = new GridLayoutManager(this, Utils.getQtdColunas(this));
         //nao gostei de como ficou.
 
         GridLayoutManager grid = new GridLayoutManager(this, 2);
 
-        rcMovies.setLayoutManager(grid);
-        rcMovies.setHasFixedSize(true);
+        recycleMovies.setLayoutManager(grid);
+        recycleMovies.setHasFixedSize(true);
 
         filmes = new ArrayList<>();
 
         adapter = new MovieAdapter(this, filmes, this);
 
-        rcMovies.setAdapter(adapter);
+        recycleMovies.setAdapter(adapter);
 
         carregoFilmes(order);
 
@@ -76,15 +72,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private void carregoFilmes(String order){
 
-        if(isOnline()){
-            rcMovies.setVisibility(View.VISIBLE);
-            lytErro.setVisibility(View.INVISIBLE);
+        if(NetworkUtils.isOnline(this)){
+            recycleMovies.setVisibility(View.VISIBLE);
+            linearLayoutErro.setVisibility(View.INVISIBLE);
             URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
-            new MoviesQueryTask().execute(dbMovieUrl);
+            new MovieService(this,this).execute(dbMovieUrl);
         }
         else{
-            rcMovies.setVisibility(View.INVISIBLE);
-            lytErro.setVisibility(View.VISIBLE);
+            recycleMovies.setVisibility(View.INVISIBLE);
+            linearLayoutErro.setVisibility(View.VISIBLE);
         }
     }
 
@@ -103,14 +99,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         switch (item.getItemId()){
             case R.id.mnuPop:
-                order = "popular";
+                order = getString(R.string.order_popular);
                 carregoFilmes(order);
                 pop.setEnabled(false);
                 rat.setEnabled(true);
                 break;
 
             case R.id.mnuRat:
-                order = "top_rated";
+                order = getString(R.string.order_top_rated);
                 carregoFilmes(order);
                 pop.setEnabled(true);
                 rat.setEnabled(false);
@@ -131,89 +127,33 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         //Toast.makeText(this,String.valueOf(clickedItemIndex),Toast.LENGTH_LONG).show();
 
         Intent intent= new Intent(this, DetalhesActivity.class);
-        intent.putExtra("filme", filmes.get(clickedItemIndex));
+        intent.putExtra(Filme.EXTRA_FILME, filmes.get(clickedItemIndex));
 
         startActivity(intent);
 
     }
 
+    @Override
+    public void processFinish(ArrayList<Filme> outfilmes) {
 
-    class MoviesQueryTask extends AsyncTask<URL, Void, String>{
+        progressBar.setVisibility(View.INVISIBLE);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pgLoading.setVisibility(View.VISIBLE);
-
+        if(outfilmes != null){
+            filmes = outfilmes;
+            adapter.setMovies(filmes);
+            adapter.notifyDataSetChanged();
+        }else{
+            recycleMovies.setVisibility(View.INVISIBLE);
+            linearLayoutErro.setVisibility(View.VISIBLE);
         }
 
-        @Override
-        protected String doInBackground(URL... param) {
-
-
-            URL searchUrl = param[0];
-            String jsonMovies;
-            try {
-                jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            } catch (IOException e) {
-                Log.w(TAG,"Erro ao requerir filmes", e);
-                jsonMovies = "";
-            }
-
-            return jsonMovies;
-
-        }
-
-        @Override
-        protected void onPostExecute(String jsonMovies) {
-            super.onPostExecute(jsonMovies);
-            pgLoading.setVisibility(View.INVISIBLE);
-
-            if (!jsonMovies.isEmpty() && !jsonMovies.equals("")) {
-                filmes = getMovies(jsonMovies);
-                adapter.setMovies(filmes);
-                adapter.notifyDataSetChanged();
-            }
-            else
-            {
-                rcMovies.setVisibility(View.INVISIBLE);
-                lytErro.setVisibility(View.VISIBLE);
-            }
-
-        }
     }
 
-    private ArrayList<Filme> getMovies(String jsonString) {
-
-        ArrayList<Filme> movies = new ArrayList<>();
-
-        try {
-            JSONObject pageJson = new JSONObject(jsonString);
-            JSONArray resultsJSON = pageJson.getJSONArray("results");
-
-
-            JSONObject movieJson;
-
-            for (int i=0; i<resultsJSON.length();i++){
-                movieJson = new JSONObject(resultsJSON.getString(i));
-                movies.add(new Filme(movieJson));
-            }
-
-        } catch (JSONException e) {
-           Log.e(TAG,"Erro ao decodificar JSON", e);
-        }
-
-        return movies;
+    @Override
+    public void processStart() {
+        progressBar.setVisibility(View.VISIBLE);
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm =(ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = null;
-        if (cm != null) {
-            netInfo = cm.getActiveNetworkInfo();
-        }
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
 
     @OnClick(R.id.bReconectar) void clickReconectar(){
 

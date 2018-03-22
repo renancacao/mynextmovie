@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.models.Filme;
-import com.rcacao.mynextmovie.network.NetworkUtils;
+import com.rcacao.mynextmovie.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -34,8 +34,8 @@ public class DetalhesActivity extends AppCompatActivity {
 
 
         Intent i = getIntent();
-        if (i.hasExtra("filme")){
-            filme = i.getParcelableExtra("filme");
+        if (i.hasExtra(Filme.EXTRA_FILME)){
+            filme = i.getParcelableExtra(Filme.EXTRA_FILME);
         }
         else
         {
