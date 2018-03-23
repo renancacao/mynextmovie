@@ -1,8 +1,6 @@
 package com.rcacao.mynextmovie.activities;
 
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,11 +11,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.rcacao.mynextmovie.utils.MovieService;
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.MovieAdapter;
 import com.rcacao.mynextmovie.interfaces.AsyncTaskDelegate;
 import com.rcacao.mynextmovie.models.Filme;
+import com.rcacao.mynextmovie.utils.MovieService;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 
 import java.net.URL;
@@ -111,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                 pop.setEnabled(true);
                 rat.setEnabled(false);
                 break;
+
+            case R.id.mnuPreferencias:
+                Intent intent = new Intent(this,PreferencesActivity.class);
+                startActivity(intent);
 
             default:
                 break;

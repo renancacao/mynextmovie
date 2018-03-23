@@ -15,6 +15,9 @@
         </menu>
 
     </item>
+    <item android:title="@string/menu_preferencias"
+        app:showAsAction="never"
+        android:id="@+id/mnuPreferencias" />
 
 
 </menu>

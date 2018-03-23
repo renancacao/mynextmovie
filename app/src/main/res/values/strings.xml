@@ -14,4 +14,11 @@
     <string name="log_erro_requirir_filmes">Erro ao requerir filmes</string>
     <string name="tag_movieprocessor">MovieProcessor</string>
     <string name="erro_ler_json">Erro ao ler JSON</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pref_label_num_col">Número de Colunas</string>
+    <string name="pref_key_num_col">num_col</string>
+    <string name="pref_value_num_col">2</string>
+    <string name="menu_preferencias">Preferências</string>
 </resources>

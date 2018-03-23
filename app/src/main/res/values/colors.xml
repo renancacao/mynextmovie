@@ -7,7 +7,7 @@
     <color name="vermelhoClaro">#ff8a80</color>
 
 
-    <color name="fundo_main">#000000</color>
-    <color name="texto">#FFFFFF</color>
+    <color name="fundo_main">#FF000000</color>
+    <color name="texto">#FFFFFFFF</color>
     <color name="texto_disabled">#42000000</color>
 </resources>

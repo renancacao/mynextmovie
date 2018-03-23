@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_value_num_col"
+        android:key="@string/pref_key_num_col"
+        android:title="@string/pref_label_num_col"
+        />
+
+</PreferenceScreen>
