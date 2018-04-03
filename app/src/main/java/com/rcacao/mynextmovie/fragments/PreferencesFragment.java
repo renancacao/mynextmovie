@@ -17,6 +17,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
 
         EditTextPreference preference = (EditTextPreference) findPreference(getString(R.string.pref_key_num_col));
         preference.setOnPreferenceChangeListener(this);
+        changeSummary(preference,preference.getText());
 
     }
 
@@ -40,7 +41,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Pre
             }
 
         }
+        changeSummary(preference, (String) newValue);
         return true;
+    }
+
+    private void changeSummary(Preference preference, String value){
+        preference.setSummary(value);
     }
 
 

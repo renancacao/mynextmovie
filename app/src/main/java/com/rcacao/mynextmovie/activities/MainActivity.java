@@ -1,8 +1,10 @@
 package com.rcacao.mynextmovie.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -25,15 +27,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskDelegate {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
     @BindView(R.id.recycleMovies) RecyclerView recycleMovies;
 
+    private GridLayoutManager grid;
+
     private String order = "";
     private MovieAdapter adapter;
     private ArrayList<Filme> filmes;
+
 
     private MenuItem pop, rat;
 
@@ -53,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         //GridLayoutManager grid = new GridLayoutManager(this, Utils.getQtdColunas(this));
         //nao gostei de como ficou.
 
-        GridLayoutManager grid = new GridLayoutManager(this, 2);
+        grid = new GridLayoutManager(this, 2);
+
+        setupSharedPreferences();
 
         recycleMovies.setLayoutManager(grid);
         recycleMovies.setHasFixedSize(true);
@@ -66,6 +73,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         carregoFilmes(order);
 
+    }
+
+    private void setupSharedPreferences(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        try {
+            grid.setSpanCount(Integer.parseInt(sharedPreferences.getString(
+                    getString(R.string.pref_key_num_col),getString(R.string.pref_value_num_col))));
+
+        }catch(Exception ignored) {}
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     private void carregoFilmes(String order){
@@ -163,4 +181,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_key_num_col))){
+            grid.setSpanCount(Integer.parseInt(sharedPreferences.getString(
+                    getString(R.string.pref_key_num_col),getString(R.string.pref_value_num_col))));
+        }
+    }
 }

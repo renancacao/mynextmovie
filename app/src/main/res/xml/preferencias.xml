@@ -5,6 +5,7 @@
         android:defaultValue="@string/pref_value_num_col"
         android:key="@string/pref_key_num_col"
         android:title="@string/pref_label_num_col"
+        android:summary=""
         />
 
 </PreferenceScreen>
