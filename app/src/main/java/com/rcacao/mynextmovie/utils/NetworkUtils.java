@@ -42,6 +42,24 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buidingUrlTrailers(int id) {
+
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(String.valueOf(id))
+                .appendPath("videos")
+                .appendQueryParameter(KEY_URL, BuildConfig.MYAUTH).build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -69,5 +87,6 @@ public class NetworkUtils {
         }
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
 
 }

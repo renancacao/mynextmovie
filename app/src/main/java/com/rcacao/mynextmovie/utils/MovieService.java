@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.rcacao.mynextmovie.R;
-import com.rcacao.mynextmovie.interfaces.AsyncTaskDelegate;
+import com.rcacao.mynextmovie.interfaces.AsyncTaskMoviesDelegate;
 import com.rcacao.mynextmovie.models.Filme;
 
 import java.io.IOException;
@@ -16,11 +16,11 @@ public class MovieService extends AsyncTask<URL, Void, ArrayList<Filme>> {
 
     private final String TAG = getClass().getName();
 
-    private AsyncTaskDelegate delegate = null;
+    private AsyncTaskMoviesDelegate delegate = null;
     private Context context = null;
 
 
-    public MovieService(AsyncTaskDelegate responder,Context context){
+    public MovieService(AsyncTaskMoviesDelegate responder, Context context){
         this.delegate = responder;
         this.context = context;
     }
@@ -33,7 +33,7 @@ public class MovieService extends AsyncTask<URL, Void, ArrayList<Filme>> {
         try {
             jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
         } catch (IOException e) {
-            Log.w(TAG,context.getString(R.string.log_erro_requirir_filmes), e);
+            Log.w(TAG,context.getString(R.string.erro_requirir_filmes), e);
             jsonMovies = "";
         }
 

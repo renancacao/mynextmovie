@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">MyNextMovie</string>
+
     <string name="poster_desc">Cartaz do filme</string>
     <string name="orderby">Ordernar por</string>
     <string name="popular">Mais popular</string>
@@ -9,16 +10,21 @@
     <string name="poster_do_filme">Poster do filme</string>
     <string name="ops">Ops! Parece que o aplicativo não conseguiu se conectar à internet ou ao servidor!</string>
     <string name="tentar_novamente">Tentar novamente</string>
+
     <string name="order_popular">popular</string>
     <string name="order_top_rated">top_rated</string>
-    <string name="log_erro_requirir_filmes">Erro ao requerir filmes</string>
-    <string name="tag_movieprocessor">MovieProcessor</string>
-    <string name="erro_ler_json">Erro ao ler JSON</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="erro_ler_json">Erro ao ler JSON</string>
+    <string name="erro_requirir_filmes">Erro ao requerir filmes</string>
+    <string name="erro_requirir_trailers">Erro ao requerir trailers</string>
+
+    <string name="tag_movieprocessor">MovieProcessor</string>
+    <string name="tag_trailerprocessor">YouTubeProcessor</string>
+
+
     <string name="pref_label_num_col">Número de Colunas</string>
     <string name="pref_key_num_col">num_col</string>
     <string name="pref_value_num_col">2</string>
     <string name="menu_preferencias">Preferências</string>
+    <string name="trailers">Trailers</string>
 </resources>

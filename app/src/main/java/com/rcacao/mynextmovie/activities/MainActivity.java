@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.MovieAdapter;
-import com.rcacao.mynextmovie.interfaces.AsyncTaskDelegate;
+import com.rcacao.mynextmovie.interfaces.AsyncTaskMoviesDelegate;
 import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.utils.MovieService;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
@@ -27,11 +27,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskMoviesDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
-    @BindView(R.id.recycleMovies) RecyclerView recycleMovies;
+    @BindView(R.id.recycleViewMovies) RecyclerView recycleViewMovies;
 
     private GridLayoutManager grid;
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         order = getString(R.string.order_popular);
 
-        recycleMovies = findViewById(R.id.recycleMovies);
+        recycleViewMovies = findViewById(R.id.recycleViewMovies);
 
         //GridLayoutManager grid = new GridLayoutManager(this, Utils.getQtdColunas(this));
         //nao gostei de como ficou.
@@ -62,14 +62,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         setupSharedPreferences();
 
-        recycleMovies.setLayoutManager(grid);
-        recycleMovies.setHasFixedSize(true);
+        recycleViewMovies.setLayoutManager(grid);
+        recycleViewMovies.setHasFixedSize(true);
 
         filmes = new ArrayList<>();
 
         adapter = new MovieAdapter(this, filmes, this);
 
-        recycleMovies.setAdapter(adapter);
+        recycleViewMovies.setAdapter(adapter);
 
         carregoFilmes(order);
 
@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     private void carregoFilmes(String order){
 
         if(NetworkUtils.isOnline(this)){
-            recycleMovies.setVisibility(View.VISIBLE);
+            recycleViewMovies.setVisibility(View.VISIBLE);
             linearLayoutErro.setVisibility(View.INVISIBLE);
             URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
             new MovieService(this,this).execute(dbMovieUrl);
         }
         else{
-            recycleMovies.setVisibility(View.INVISIBLE);
+            recycleViewMovies.setVisibility(View.INVISIBLE);
             linearLayoutErro.setVisibility(View.VISIBLE);
         }
     }
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             adapter.setMovies(filmes);
             adapter.notifyDataSetChanged();
         }else{
-            recycleMovies.setVisibility(View.INVISIBLE);
+            recycleViewMovies.setVisibility(View.INVISIBLE);
             linearLayoutErro.setVisibility(View.VISIBLE);
         }
 
