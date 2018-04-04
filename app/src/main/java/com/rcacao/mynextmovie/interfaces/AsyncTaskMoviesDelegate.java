@@ -4,6 +4,6 @@ import com.rcacao.mynextmovie.models.Filme;
 import java.util.ArrayList;
 
 public interface AsyncTaskMoviesDelegate {
-    void processFinish(ArrayList<Filme> output);
+    void processFinishMovies(ArrayList<Filme> output);
     void processStart();
 }

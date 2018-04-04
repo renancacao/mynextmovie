@@ -1,10 +1,7 @@
 package com.rcacao.mynextmovie.utils;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.rcacao.mynextmovie.R;
-import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.models.Trailer;
 
 import org.json.JSONArray;
@@ -15,12 +12,7 @@ import java.util.ArrayList;
 
 class TrailersProcessor {
 
-    private Context context = null;
-    TrailersProcessor(Context context) {
-        this.context = context;
-    }
-
-    ArrayList<Trailer> getTrailers(String jsonString) {
+       ArrayList<Trailer> getTrailers(String jsonString) {
 
         ArrayList<Trailer> trailers = new ArrayList<>();
 
@@ -40,7 +32,7 @@ class TrailersProcessor {
             }
 
         } catch (JSONException e) {
-            Log.e(context.getString(R.string.tag_trailerprocessor),context.getString(R.string.erro_ler_json), e);
+            Log.e("TrailersProcessor","Erro ao ler JSON.", e);
 
         }
 

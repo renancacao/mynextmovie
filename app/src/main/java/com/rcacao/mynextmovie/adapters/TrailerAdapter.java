@@ -35,7 +35,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     }
 
     public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
+        void onListItemClickTrailer(int clickedItemIndex);
     }
 
     @NonNull
@@ -51,7 +51,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     @Override
     public void onBindViewHolder(@NonNull TrailerViewHolder holder, int position) {
         Picasso.with(context).load(trailers.get(position).getUrlImage()).into(holder.imgTrailer);
-        holder.txtTrailer.setText(trailers.get(position).getTitulo());
+        holder.tTrailer.setText(trailers.get(position).getTitulo());
     }
 
 
@@ -69,12 +69,12 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     public class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final ImageView imgTrailer;
-        final TextView txtTrailer;
+        final TextView tTrailer;
 
         TrailerViewHolder(View itemView) {
             super(itemView);
             imgTrailer = itemView.findViewById(R.id.imgTrailer);
-            txtTrailer = itemView.findViewById(R.id.txtTrailer);
+            tTrailer = itemView.findViewById(R.id.tTrailer);
 
             itemView.setOnClickListener(this);
         }
@@ -82,7 +82,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         @Override
         public void onClick(View view) {
             int cPos = getAdapterPosition();
-            mOnClickListener.onListItemClick(cPos);
+            mOnClickListener.onListItemClickTrailer(cPos);
         }
     }
 }

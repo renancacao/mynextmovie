@@ -17,7 +17,7 @@ import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.MovieAdapter;
 import com.rcacao.mynextmovie.interfaces.AsyncTaskMoviesDelegate;
 import com.rcacao.mynextmovie.models.Filme;
-import com.rcacao.mynextmovie.utils.MovieService;
+import com.rcacao.mynextmovie.utils.MoviesService;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 
 import java.net.URL;
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             recycleViewMovies.setVisibility(View.VISIBLE);
             linearLayoutErro.setVisibility(View.INVISIBLE);
             URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
-            new MovieService(this,this).execute(dbMovieUrl);
+            new MoviesService(this).execute(dbMovieUrl);
         }
         else{
             recycleViewMovies.setVisibility(View.INVISIBLE);
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     }
 
     @Override
-    public void processFinish(ArrayList<Filme> outfilmes) {
+    public void processFinishMovies(ArrayList<Filme> outfilmes) {
 
         progressBar.setVisibility(View.INVISIBLE);
 

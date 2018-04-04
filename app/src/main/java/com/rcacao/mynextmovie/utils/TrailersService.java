@@ -1,10 +1,7 @@
 package com.rcacao.mynextmovie.utils;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.interfaces.AsyncTaskTrailersDelegate;
 import com.rcacao.mynextmovie.models.Trailer;
 
@@ -16,13 +13,11 @@ public class TrailersService extends AsyncTask<URL, Void, ArrayList<Trailer>> {
 
     private final String TAG = getClass().getName();
 
-    private AsyncTaskTrailersDelegate delegate = null;
-    private Context context = null;
+    private AsyncTaskTrailersDelegate delegate;
 
 
-    public TrailersService(AsyncTaskTrailersDelegate responder, Context context){
+    public TrailersService(AsyncTaskTrailersDelegate responder){
         this.delegate = responder;
-        this.context = context;
     }
 
     @Override
@@ -33,12 +28,12 @@ public class TrailersService extends AsyncTask<URL, Void, ArrayList<Trailer>> {
         try {
             jsonTrailers = NetworkUtils.getResponseFromHttpUrl(searchUrl);
         } catch (IOException e) {
-            Log.w(TAG,context.getString(R.string.erro_requirir_trailers), e);
+            Log.w( TAG, "Erro ao requirir trailers.", e);
             jsonTrailers = "";
         }
 
         if (jsonTrailers != null && !jsonTrailers.isEmpty()) {
-            return new TrailersProcessor(context).getTrailers(jsonTrailers);
+            return new TrailersProcessor().getTrailers(jsonTrailers);
         }
         else
         {
@@ -51,7 +46,7 @@ public class TrailersService extends AsyncTask<URL, Void, ArrayList<Trailer>> {
     protected void onPostExecute(ArrayList<Trailer> trailers) {
         super.onPostExecute(trailers);
         if (delegate != null){
-            delegate.processFinish(trailers);
+            delegate.processFinishTrailers(trailers);
         }
     }
 
@@ -59,7 +54,7 @@ public class TrailersService extends AsyncTask<URL, Void, ArrayList<Trailer>> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (delegate != null){
-            delegate.processStart();
+            delegate.processStartTrailers();
         }
     }
 

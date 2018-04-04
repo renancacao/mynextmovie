@@ -1,10 +1,8 @@
 package com.rcacao.mynextmovie.utils;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.interfaces.AsyncTaskMoviesDelegate;
 import com.rcacao.mynextmovie.models.Filme;
 
@@ -12,17 +10,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MovieService extends AsyncTask<URL, Void, ArrayList<Filme>> {
+public class MoviesService extends AsyncTask<URL, Void, ArrayList<Filme>> {
 
     private final String TAG = getClass().getName();
 
-    private AsyncTaskMoviesDelegate delegate = null;
-    private Context context = null;
+    private AsyncTaskMoviesDelegate delegate;
 
-
-    public MovieService(AsyncTaskMoviesDelegate responder, Context context){
+    public MoviesService(AsyncTaskMoviesDelegate responder){
         this.delegate = responder;
-        this.context = context;
     }
 
     @Override
@@ -33,12 +28,12 @@ public class MovieService extends AsyncTask<URL, Void, ArrayList<Filme>> {
         try {
             jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
         } catch (IOException e) {
-            Log.w(TAG,context.getString(R.string.erro_requirir_filmes), e);
+            Log.w(TAG,"Erro ao requirir filmes", e);
             jsonMovies = "";
         }
 
         if (jsonMovies != null && !jsonMovies.isEmpty()) {
-            return new MovieProcessor(context).getMovies(jsonMovies);
+            return new MoviesProcessor().getMovies(jsonMovies);
         }
         else
         {
@@ -51,7 +46,7 @@ public class MovieService extends AsyncTask<URL, Void, ArrayList<Filme>> {
     protected void onPostExecute(ArrayList<Filme> filmes) {
         super.onPostExecute(filmes);
         if (delegate != null){
-            delegate.processFinish(filmes);
+            delegate.processFinishMovies(filmes);
         }
     }
 

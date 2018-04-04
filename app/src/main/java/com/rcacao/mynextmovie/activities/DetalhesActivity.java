@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,13 +11,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.rcacao.mynextmovie.R;
+import com.rcacao.mynextmovie.adapters.ReviewAdapter;
 import com.rcacao.mynextmovie.adapters.TrailerAdapter;
+import com.rcacao.mynextmovie.interfaces.AsyncTaskReviewsDelegate;
 import com.rcacao.mynextmovie.interfaces.AsyncTaskTrailersDelegate;
 import com.rcacao.mynextmovie.models.Filme;
+import com.rcacao.mynextmovie.models.Review;
 import com.rcacao.mynextmovie.models.Trailer;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
+import com.rcacao.mynextmovie.utils.ReviewsService;
 import com.rcacao.mynextmovie.utils.TrailersService;
 import com.squareup.picasso.Picasso;
 
@@ -28,7 +30,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrailersDelegate, TrailerAdapter.ListItemClickListener {
+public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrailersDelegate, AsyncTaskReviewsDelegate,
+        TrailerAdapter.ListItemClickListener {
 
 
     @BindView(R.id.tTitulo) TextView tTitulo;
@@ -37,11 +40,18 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
     @BindView(R.id.tSinopse) TextView tSinopse;
     @BindView(R.id.imgPoster) ImageView imgPoster;
     @BindView(R.id.progressBarTrailers) ProgressBar progressBarTrailers;
+    @BindView(R.id.progressBarReviews) ProgressBar progressBarReviews;
+
     @BindView(R.id.recyclerViewTrailers) RecyclerView recycleViewTrailers;
+    @BindView(R.id.recyclerViewReviews) RecyclerView recyclerViewReviews;
+
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
 
-    private TrailerAdapter adapter;
+    private TrailerAdapter trailerAdapter;
+    private ReviewAdapter reviewAdapter;
+
     private ArrayList<Trailer> trailers;
+    private ArrayList<Review> reviews;
 
 
     private Filme filme = null;
@@ -64,17 +74,31 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
         }
 
 
+        LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this);
+        layoutManagerTrailers.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        LinearLayoutManager layoutManagerReviews = new LinearLayoutManager(this);
+        layoutManagerReviews.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        //trailers ///////////////////////////
         trailers = new ArrayList<>();
 
-        adapter = new TrailerAdapter(this, trailers, this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recycleViewTrailers.setLayoutManager(layoutManager);
+        trailerAdapter = new TrailerAdapter(this, trailers, this);
+        recycleViewTrailers.setLayoutManager(layoutManagerTrailers);
         recycleViewTrailers.setHasFixedSize(true);
 
-        recycleViewTrailers.setAdapter(adapter);
+        recycleViewTrailers.setAdapter(trailerAdapter);
 
-           carregaFilme();
+        //reviews ////////////////////////////
+        reviews = new ArrayList<>();
+
+        reviewAdapter = new ReviewAdapter(this, reviews);
+        recyclerViewReviews.setLayoutManager(layoutManagerReviews);
+        recyclerViewReviews.setHasFixedSize(true);
+
+        recyclerViewReviews.setAdapter(reviewAdapter);
+
+        carregaFilme();
     }
 
     private void carregaFilme() {
@@ -85,7 +109,16 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
         tLancamento.setText(filme.getLancamento());
         tSinopse.setText(filme.getSinopse());
 
-        carregoTrailers(filme.getId());
+        if (carregoTrailers(filme.getId()) && carregoReviews(filme.getId())){
+            recycleViewTrailers.setVisibility(View.VISIBLE);
+            recyclerViewReviews.setVisibility(View.VISIBLE);
+            linearLayoutErro.setVisibility(View.INVISIBLE);
+        }
+        else{
+            recycleViewTrailers.setVisibility(View.INVISIBLE);
+            recyclerViewReviews.setVisibility(View.INVISIBLE);
+            linearLayoutErro.setVisibility(View.VISIBLE);
+        }
 
 
     }
@@ -97,14 +130,14 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
 
 
     @Override
-    public void processFinish(ArrayList<Trailer> outTrailers) {
+    public void processFinishTrailers(ArrayList<Trailer> outTrailers) {
 
         progressBarTrailers.setVisibility(View.INVISIBLE);
 
         if(outTrailers != null){
             trailers = outTrailers;
-            adapter.setTrailers(trailers);
-            adapter.notifyDataSetChanged();
+            trailerAdapter.setTrailers(trailers);
+            trailerAdapter.notifyDataSetChanged();
         }else{
             recycleViewTrailers.setVisibility(View.INVISIBLE);
             linearLayoutErro.setVisibility(View.VISIBLE);
@@ -113,29 +146,63 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
     }
 
     @Override
-    public void processStart() {
+    public void processFinishReviews(ArrayList<Review> outReviews) {
 
-        progressBarTrailers.setVisibility(View.VISIBLE);
+        progressBarReviews.setVisibility(View.INVISIBLE);
 
-    }
-
-    private void carregoTrailers(int id){
-
-        if(NetworkUtils.isOnline(this)){
-            recycleViewTrailers.setVisibility(View.VISIBLE);
-            linearLayoutErro.setVisibility(View.INVISIBLE);
-            URL trailersUrl = NetworkUtils.buidingUrlTrailers(id);
-            new TrailersService(this,this).execute(trailersUrl);
-        }
-        else{
-            recycleViewTrailers.setVisibility(View.INVISIBLE);
+        if(outReviews != null){
+            reviews = outReviews;
+            reviewAdapter.setTrailers(reviews);
+            reviewAdapter.notifyDataSetChanged();
+        }else{
+            recyclerViewReviews.setVisibility(View.INVISIBLE);
             linearLayoutErro.setVisibility(View.VISIBLE);
         }
 
     }
 
     @Override
-    public void onListItemClick(int clickedItemIndex) {
+    public void processStartTrailers() {
+
+        progressBarTrailers.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void processStartReviews() {
+
+        progressBarReviews.setVisibility(View.VISIBLE);
+
+    }
+
+    private boolean carregoTrailers(int id){
+
+        if(NetworkUtils.isOnline(this)){
+            URL url = NetworkUtils.buidingUrlTrailers(id);
+            new TrailersService(this).execute(url);
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    private boolean carregoReviews(int id){
+
+        if(NetworkUtils.isOnline(this)){
+            URL url = NetworkUtils.buidingUrlReviews(id);
+            new ReviewsService(this).execute(url);
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    @Override
+    public void onListItemClickTrailer(int clickedItemIndex) {
 
         String video_path =  trailers.get(clickedItemIndex).getLink();
         Uri uri = Uri.parse(video_path);
@@ -143,4 +210,6 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
         startActivity(intent);
 
     }
+
+
 }

@@ -6,6 +6,6 @@ import com.rcacao.mynextmovie.models.Trailer;
 import java.util.ArrayList;
 
 public interface AsyncTaskTrailersDelegate {
-    void processFinish(ArrayList<Trailer> output);
-    void processStart();
+    void processFinishTrailers(ArrayList<Trailer> output);
+    void processStartTrailers();
 }
