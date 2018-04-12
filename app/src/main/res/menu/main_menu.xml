@@ -9,8 +9,11 @@
                     android:icon="@drawable/ic_whatshot_white_24dp" app:showAsAction="withText"
                     />
 
-                <item android:title="@string/best_rated" android:id="@+id/mnuRat" android:orderInCategory="102"
-                    android:icon="@drawable/ic_star_white_24dp" app:showAsAction="withText"/>
+            <item android:title="@string/best_rated" android:id="@+id/mnuRat" android:orderInCategory="102"
+                android:icon="@drawable/ic_star_white_24dp" app:showAsAction="withText"/>
+
+            <item android:title="@string/my_favorits" android:id="@+id/mnuFav" android:orderInCategory="103"
+                android:icon="@drawable/ic_favorite_white_24dp" app:showAsAction="withText"/>
 
         </menu>
 

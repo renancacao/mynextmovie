@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity"
+        <activity
+            android:name=".activities.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +25,19 @@
         <activity
             android:name=".activities.DetalhesActivity"
             android:parentActivityName=".activities.MainActivity" />
-
-        <activity android:name=".activities.PreferencesActivity"
+        <activity
+            android:name=".activities.PreferencesActivity"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/PreferenceTheme"
-            />
+            android:theme="@style/PreferenceTheme" />
+
+        <provider
+            android:name=".data.MovieContentProvider"
+            android:authorities="com.rcacao.mynextmovie"
+            android:exported="false" />
+
+        <activity android:name=".activities.ReviewActivity"
+            android:parentActivityName=".activities.DetalhesActivity"></activity>
+
     </application>
 
 </manifest>

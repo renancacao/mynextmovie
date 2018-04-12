@@ -16,12 +16,20 @@ import java.util.ArrayList;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
+    final private ListItemClickListener mOnClickListener;
     private ArrayList<Review> reviews;
     private final Context context;
 
-    public ReviewAdapter(Context context, ArrayList<Review> reviews) {
+    private final int TAMANHO_MAXIMO = 200;
+
+    public interface ListItemClickListener {
+        void onListItemClickReview(int clickedItemIndex);
+    }
+
+    public ReviewAdapter(Context context, ArrayList<Review> reviews, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.reviews = reviews;
+        this.mOnClickListener = mOnClickListener;
     }
 
     public void setTrailers(ArrayList<Review> reviews) {
@@ -40,7 +48,22 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        holder.tReview.setText(reviews.get(position).getReview());
+
+
+        if (reviews.get(position).getReview().length()>TAMANHO_MAXIMO){
+            holder.tReview.setText(
+                    resumeReview(reviews.get(position).getReview()
+                            .replace("\n","").replace("\r", "")));
+            holder.tReticencia.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            holder.tReview.setText(reviews.get(position).getReview()
+                    .replace("\n","").replace("\r", ""));
+            holder.tReticencia.setVisibility(View.INVISIBLE);
+        }
+
+
         holder.tAutor.setText(reviews.get(position).getAutor());
     }
 
@@ -60,17 +83,30 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
         final TextView tReview;
         final TextView tAutor;
+        final TextView tReticencia;
 
         ReviewViewHolder(View itemView) {
             super(itemView);
             tReview = itemView.findViewById(R.id.tReview);
             tAutor = itemView.findViewById(R.id.tAutor);
+            tReticencia = itemView.findViewById(R.id.tReticencia);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-
+            int cPos = getAdapterPosition();
+            mOnClickListener.onListItemClickReview(cPos);
         }
     }
+
+    private String resumeReview(String text){
+
+
+        return text.substring(0,TAMANHO_MAXIMO-1);
+
+
+    }
+
+
 }

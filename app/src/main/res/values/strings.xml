@@ -6,6 +6,7 @@
     <string name="orderby">Ordernar por</string>
     <string name="popular">Mais popular</string>
     <string name="best_rated">Melhor avaliado</string>
+    <string name="my_favorits">Meus favoritos</string>
     <string name="avaliacao">Avaliação:</string>
     <string name="lancamento">Lançamento:</string>
     <string name="poster_do_filme">Poster do filme</string>
@@ -23,4 +24,12 @@
     <string name="menu_preferencias">Preferências</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+
+    <string name="menu_Favoritar">Adicionar aos favoritos.</string>
+    <string name="menu_DesFavoritar">Remover dos favoritos.</string>
+
+    <string name="add_favoritos">"Adicionado aos favoritos!"</string>
+    <string name="remove_favoritos">"Removido dos favoritos!"</string>
+    <string name="reticencias">...</string>
+
 </resources>
