@@ -39,12 +39,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private GridLayoutManager grid;
 
+    private final String ORDER_POPULAR = "popular";
+    private final String ORDER_TOP_RATED = "top_rated";
+    private final String ORDER_FAVORITOS = "fav";
+
     private String order = "";
+
     private MovieAdapter adapter;
     private ArrayList<Filme> filmes;
 
 
-    private MenuItem pop, rat;
+    private MenuItem menuPop, menuRat, menuFav;
 
 
 
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         ButterKnife.bind(this);
 
-        order = getString(R.string.order_popular);
+        order = ORDER_POPULAR;
 
         recycleViewMovies = findViewById(R.id.recycleViewMovies);
 
@@ -92,27 +97,41 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private void carregoFilmes(String order){
 
-        if(NetworkUtils.isOnline(this)){
+        boolean isonline = NetworkUtils.isOnline(this);
+        Bundle queryBundle = new Bundle();
+
+        if (order.equals(ORDER_POPULAR) || order.matches(ORDER_TOP_RATED)){
+            if(isonline){
+                URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
+                recycleViewMovies.setVisibility(View.VISIBLE);
+                linearLayoutErro.setVisibility(View.INVISIBLE);
+                queryBundle.putString(MoviesAsyncTaskLoader.URL_ARG, dbMovieUrl.toString());
+                progressBar.setVisibility(View.VISIBLE);
+                getSupportLoaderManager().restartLoader(MOVIES_LOADER, queryBundle, this);
+            }
+            else{
+                recycleViewMovies.setVisibility(View.INVISIBLE);
+                linearLayoutErro.setVisibility(View.VISIBLE);
+            }
+        }
+        else if (order.equals(ORDER_FAVORITOS)){
             recycleViewMovies.setVisibility(View.VISIBLE);
             linearLayoutErro.setVisibility(View.INVISIBLE);
-            URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
-            Bundle queryBundle = new Bundle();
-            queryBundle.putString(MoviesAsyncTaskLoader.URL_ARG, dbMovieUrl.toString());
-            progressBar.setVisibility(View.VISIBLE);
+            queryBundle.putBoolean(MoviesAsyncTaskLoader.GET_FAVS, true);
             getSupportLoaderManager().restartLoader(MOVIES_LOADER, queryBundle, this);
         }
-        else{
-            recycleViewMovies.setVisibility(View.INVISIBLE);
-            linearLayoutErro.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        pop = menu.findItem(R.id.mnuPop);
-        rat = menu.findItem(R.id.mnuRat);
-        pop.setEnabled(false);
+        menuPop = menu.findItem(R.id.mnuPop);
+        menuRat = menu.findItem(R.id.mnuRat);
+        menuFav = menu.findItem(R.id.mnuFav);
+
+        menuPop.setEnabled(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -122,17 +141,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         switch (item.getItemId()){
             case R.id.mnuPop:
-                order = getString(R.string.order_popular);
+                order = ORDER_POPULAR;
                 carregoFilmes(order);
-                pop.setEnabled(false);
-                rat.setEnabled(true);
+                menuPop.setEnabled(false);
+                menuRat.setEnabled(true);
+                menuFav.setEnabled(true);
                 break;
 
             case R.id.mnuRat:
-                order = getString(R.string.order_top_rated);
+                order = ORDER_TOP_RATED;
                 carregoFilmes(order);
-                pop.setEnabled(true);
-                rat.setEnabled(false);
+                menuPop.setEnabled(true);
+                menuRat.setEnabled(false);
+                menuFav.setEnabled(true);
+                break;
+
+            case R.id.mnuFav:
+                order = ORDER_FAVORITOS;
+                carregoFilmes(order);
+                menuPop.setEnabled(true);
+                menuRat.setEnabled(true);
+                menuFav.setEnabled(false);
                 break;
 
             case R.id.mnuPreferencias:

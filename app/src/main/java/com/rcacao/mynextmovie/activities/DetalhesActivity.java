@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DetalhesActivity extends AppCompatActivity implements
         android.support.v4.app.LoaderManager.LoaderCallbacks,
@@ -52,6 +53,10 @@ public class DetalhesActivity extends AppCompatActivity implements
     @BindView(R.id.imgPoster) ImageView imgPoster;
     @BindView(R.id.progressBarTrailers) ProgressBar progressBarTrailers;
     @BindView(R.id.progressBarReviews) ProgressBar progressBarReviews;
+
+    @BindView(R.id.tTrailers) TextView tTrailers;
+    @BindView(R.id.tReviews) TextView tReviews;
+
 
     @BindView(R.id.recyclerViewTrailers) RecyclerView recycleViewTrailers;
     @BindView(R.id.recyclerViewReviews) RecyclerView recyclerViewReviews;
@@ -129,17 +134,33 @@ public class DetalhesActivity extends AppCompatActivity implements
         tSinopse.setText(filme.getSinopse());
 
         if (carregoTrailers(filme.getId()) && carregoReviews(filme.getId())){
-            recycleViewTrailers.setVisibility(View.VISIBLE);
-            recyclerViewReviews.setVisibility(View.VISIBLE);
-            linearLayoutErro.setVisibility(View.INVISIBLE);
+            ajustaTelaErro(false);
+
         }
         else{
-            recycleViewTrailers.setVisibility(View.INVISIBLE);
-            recyclerViewReviews.setVisibility(View.INVISIBLE);
-            linearLayoutErro.setVisibility(View.VISIBLE);
+            ajustaTelaErro(true);
         }
 
         isFavorite = isInFavorits(filme.getId());
+
+    }
+
+    private void ajustaTelaErro(boolean erro){
+
+        if (erro){
+            recycleViewTrailers.setVisibility(View.INVISIBLE);
+            recyclerViewReviews.setVisibility(View.INVISIBLE);
+            tTrailers.setVisibility(View.INVISIBLE);
+            tReviews.setVisibility(View.INVISIBLE);
+            linearLayoutErro.setVisibility(View.VISIBLE);
+        }
+        else{
+            recycleViewTrailers.setVisibility(View.VISIBLE);
+            recyclerViewReviews.setVisibility(View.VISIBLE);
+            tTrailers.setVisibility(View.VISIBLE);
+            tReviews.setVisibility(View.VISIBLE);
+            linearLayoutErro.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -312,9 +333,10 @@ public class DetalhesActivity extends AppCompatActivity implements
                 trailers = (ArrayList<Trailer>) data;
                 trailerAdapter.setTrailers(trailers);
                 trailerAdapter.notifyDataSetChanged();
+                ajustaTelaErro(false);
+
             }else{
-                recycleViewTrailers.setVisibility(View.INVISIBLE);
-                linearLayoutErro.setVisibility(View.VISIBLE);
+                ajustaTelaErro(true);
             }
         }
         else //REVIEWS_LOADER
@@ -325,15 +347,23 @@ public class DetalhesActivity extends AppCompatActivity implements
                 reviews = (ArrayList<Review>) data;
                 reviewAdapter.setTrailers(reviews);
                 reviewAdapter.notifyDataSetChanged();
+                ajustaTelaErro(false);
+
             }else{
-                recyclerViewReviews.setVisibility(View.INVISIBLE);
-                linearLayoutErro.setVisibility(View.VISIBLE);
+                ajustaTelaErro(true);
+
             }
         }
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader loader) {
+
+    }
+
+    @OnClick(R.id.bReconectar) void clickReconectar(){
+
+        carregaFilme();
 
     }
 
