@@ -8,9 +8,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class ReviewsProcessor {
+public class ReviewsProcessor {
 
-    ArrayList<Review> getReviews(String jsonString) {
+    public ArrayList<Review> getReviews(String jsonString) {
 
         ArrayList<Review> reviews = new ArrayList<>();
 

@@ -3,6 +3,8 @@ package com.rcacao.mynextmovie.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,9 +17,8 @@ import android.widget.ProgressBar;
 
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.MovieAdapter;
-import com.rcacao.mynextmovie.interfaces.AsyncTaskMoviesDelegate;
 import com.rcacao.mynextmovie.models.Filme;
-import com.rcacao.mynextmovie.utils.MoviesService;
+import com.rcacao.mynextmovie.asynctaskloader.MoviesAsyncTaskLoader;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 
 import java.net.URL;
@@ -27,7 +28,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, AsyncTaskMoviesDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener,  SharedPreferences.OnSharedPreferenceChangeListener,
+        android.support.v4.app.LoaderManager.LoaderCallbacks<ArrayList<Filme>>{
+
+    private static final int MOVIES_LOADER = 33 ;
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
@@ -92,7 +96,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             recycleViewMovies.setVisibility(View.VISIBLE);
             linearLayoutErro.setVisibility(View.INVISIBLE);
             URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
-            new MoviesService(this).execute(dbMovieUrl);
+            Bundle queryBundle = new Bundle();
+            queryBundle.putString(MoviesAsyncTaskLoader.URL_ARG, dbMovieUrl.toString());
+            progressBar.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().restartLoader(MOVIES_LOADER, queryBundle, this);
         }
         else{
             recycleViewMovies.setVisibility(View.INVISIBLE);
@@ -153,26 +160,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     }
 
-    @Override
-    public void processFinishMovies(ArrayList<Filme> outfilmes) {
-
-        progressBar.setVisibility(View.INVISIBLE);
-
-        if(outfilmes != null){
-            filmes = outfilmes;
-            adapter.setMovies(filmes);
-            adapter.notifyDataSetChanged();
-        }else{
-            recycleViewMovies.setVisibility(View.INVISIBLE);
-            linearLayoutErro.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    @Override
-    public void processStart() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
 
 
     @OnClick(R.id.bReconectar) void clickReconectar(){
@@ -188,4 +175,35 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
                     getString(R.string.pref_key_num_col),getString(R.string.pref_value_num_col))));
         }
     }
+
+
+    @NonNull
+    @Override
+    public android.support.v4.content.Loader<ArrayList<Filme>> onCreateLoader(int id, @Nullable Bundle args) {
+        return new MoviesAsyncTaskLoader(this, args);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull android.support.v4.content.Loader<ArrayList<Filme>> loader, ArrayList<Filme> outFilmes) {
+
+        progressBar.setVisibility(View.INVISIBLE);
+
+        if(outFilmes != null){
+            filmes = outFilmes;
+            adapter.setMovies(filmes);
+            adapter.notifyDataSetChanged();
+        }else{
+            recycleViewMovies.setVisibility(View.INVISIBLE);
+            linearLayoutErro.setVisibility(View.VISIBLE);
+        }
+
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull android.support.v4.content.Loader<ArrayList<Filme>> loader) {
+
+    }
+
+
 }

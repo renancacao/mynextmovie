@@ -8,9 +8,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class MoviesProcessor {
+public class MoviesProcessor {
 
-    ArrayList<Filme> getMovies(String jsonString) {
+    public ArrayList<Filme> getMovies(String jsonString) {
 
         ArrayList<Filme> movies = new ArrayList<>();
 

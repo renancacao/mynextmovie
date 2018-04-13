@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,16 +24,14 @@ import android.widget.Toast;
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.adapters.ReviewAdapter;
 import com.rcacao.mynextmovie.adapters.TrailerAdapter;
+import com.rcacao.mynextmovie.asynctaskloader.ReviewsAsyncTaskLoader;
+import com.rcacao.mynextmovie.asynctaskloader.TrailersAsyncTaskLoader;
 import com.rcacao.mynextmovie.data.MovieContract;
 import com.rcacao.mynextmovie.data.MovieContract.MovieEntry;
-import com.rcacao.mynextmovie.interfaces.AsyncTaskReviewsDelegate;
-import com.rcacao.mynextmovie.interfaces.AsyncTaskTrailersDelegate;
 import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.models.Review;
 import com.rcacao.mynextmovie.models.Trailer;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
-import com.rcacao.mynextmovie.utils.ReviewsService;
-import com.rcacao.mynextmovie.utils.TrailersService;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -39,7 +40,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrailersDelegate, AsyncTaskReviewsDelegate,
+public class DetalhesActivity extends AppCompatActivity implements
+        android.support.v4.app.LoaderManager.LoaderCallbacks,
         TrailerAdapter.ListItemClickListener, ReviewAdapter.ListItemClickListener {
 
 
@@ -66,6 +68,11 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
 
     private Filme filme = null;
     private boolean isFavorite = false;
+
+    private static final int TRAILERS_LOADER = 44 ;
+    private static final int REVIEWS_LOADER = 55 ;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,57 +188,16 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void processFinishTrailers(ArrayList<Trailer> outTrailers) {
 
-        progressBarTrailers.setVisibility(View.INVISIBLE);
-
-        if(outTrailers != null){
-            trailers = outTrailers;
-            trailerAdapter.setTrailers(trailers);
-            trailerAdapter.notifyDataSetChanged();
-        }else{
-            recycleViewTrailers.setVisibility(View.INVISIBLE);
-            linearLayoutErro.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    @Override
-    public void processFinishReviews(ArrayList<Review> outReviews) {
-
-        progressBarReviews.setVisibility(View.INVISIBLE);
-
-        if(outReviews != null){
-            reviews = outReviews;
-            reviewAdapter.setTrailers(reviews);
-            reviewAdapter.notifyDataSetChanged();
-        }else{
-            recyclerViewReviews.setVisibility(View.INVISIBLE);
-            linearLayoutErro.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    @Override
-    public void processStartTrailers() {
-
-        progressBarTrailers.setVisibility(View.VISIBLE);
-
-    }
-
-    @Override
-    public void processStartReviews() {
-
-        progressBarReviews.setVisibility(View.VISIBLE);
-
-    }
 
     private boolean carregoTrailers(int id){
 
         if(NetworkUtils.isOnline(this)){
             URL url = NetworkUtils.buidingUrlTrailers(id);
-            new TrailersService(this).execute(url);
+            Bundle queryBundle = new Bundle();
+            queryBundle.putString(TrailersAsyncTaskLoader.URL_ARG,url.toString());
+            progressBarTrailers.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().restartLoader(TRAILERS_LOADER, queryBundle, this);
             return true;
         }
         else{
@@ -244,7 +210,10 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
 
         if(NetworkUtils.isOnline(this)){
             URL url = NetworkUtils.buidingUrlReviews(id);
-            new ReviewsService(this).execute(url);
+            Bundle queryBundle = new Bundle();
+            queryBundle.putString(ReviewsAsyncTaskLoader.URL_ARG,url.toString());
+            progressBarReviews.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().restartLoader(REVIEWS_LOADER, queryBundle, this);
             return true;
         }
         else{
@@ -317,4 +286,55 @@ public class DetalhesActivity extends AppCompatActivity implements AsyncTaskTrai
         startActivity(intent);
 
     }
+
+    @NonNull
+    @Override
+    public Loader onCreateLoader(int id, @Nullable Bundle args) {
+
+        if(id == TRAILERS_LOADER)
+        {
+            return new TrailersAsyncTaskLoader(this,args);
+        }
+        else //REVIEWS_LOADER
+        {
+            return new ReviewsAsyncTaskLoader(this,args);
+        }
+    }
+
+
+    @Override
+    public void onLoadFinished(@NonNull Loader loader, Object data) {
+
+        if (loader.getId() == TRAILERS_LOADER){
+            progressBarTrailers.setVisibility(View.INVISIBLE);
+
+            if(data != null){
+                trailers = (ArrayList<Trailer>) data;
+                trailerAdapter.setTrailers(trailers);
+                trailerAdapter.notifyDataSetChanged();
+            }else{
+                recycleViewTrailers.setVisibility(View.INVISIBLE);
+                linearLayoutErro.setVisibility(View.VISIBLE);
+            }
+        }
+        else //REVIEWS_LOADER
+        {
+            progressBarReviews.setVisibility(View.INVISIBLE);
+
+            if(data != null){
+                reviews = (ArrayList<Review>) data;
+                reviewAdapter.setTrailers(reviews);
+                reviewAdapter.notifyDataSetChanged();
+            }else{
+                recyclerViewReviews.setVisibility(View.INVISIBLE);
+                linearLayoutErro.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader loader) {
+
+    }
+
 }

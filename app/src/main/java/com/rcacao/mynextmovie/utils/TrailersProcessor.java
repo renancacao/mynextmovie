@@ -10,9 +10,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class TrailersProcessor {
+public class TrailersProcessor {
 
-       ArrayList<Trailer> getTrailers(String jsonString) {
+       public ArrayList<Trailer> getTrailers(String jsonString) {
 
         ArrayList<Trailer> trailers = new ArrayList<>();
 
