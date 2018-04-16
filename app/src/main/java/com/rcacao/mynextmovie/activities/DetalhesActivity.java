@@ -127,7 +127,7 @@ public class DetalhesActivity extends AppCompatActivity implements
 
     private void carregaFilme() {
 
-        Picasso.with(this).load(getPosterURL()).into(imgPoster);
+        Picasso.get().load(getPosterURL()).into(imgPoster);
         tTitulo.setText(filme.getTitulo());
         tAvaliacao.setText(String.valueOf(filme.getAvaliacao()));
         tLancamento.setText(filme.getLancamento());
