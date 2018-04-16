@@ -4,27 +4,29 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.rcacao.mynextmovie.BuildConfig;
+import com.rcacao.mynextmovie.api.ApiInterface;
+import com.rcacao.mynextmovie.api.ApiJsonObjectFilme;
+import com.rcacao.mynextmovie.api.ApiRetrofit;
 import com.rcacao.mynextmovie.data.MovieContract;
 import com.rcacao.mynextmovie.models.Filme;
-import com.rcacao.mynextmovie.utils.MoviesProcessor;
-import com.rcacao.mynextmovie.utils.NetworkUtils;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 
-public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<ArrayList<Filme>> {
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
+public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<Filme[]> {
 
 
-    private final String TAG = getClass().getName();
     private Bundle args;
 
-    public static final String URL_ARG = "url";
+    public static final String ORDER = "order";
     public static final String GET_FAVS = "getfavs" ;
 
-    private ArrayList<Filme> mFilmes;
+    private Filme[] mFilmes;
 
     public MoviesAsyncTaskLoader(Context context, Bundle args){
         super(context);
@@ -43,7 +45,7 @@ public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskL
     }
 
     @Override
-    public ArrayList<Filme> loadInBackground() {
+    public Filme[] loadInBackground() {
 
         if (args==null){
             return null;
@@ -61,41 +63,45 @@ public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskL
 
     }
 
-    private ArrayList<Filme> loadFromAPI(){
+    private Filme[] loadFromAPI(){
 
-        String argUrl = args.getString(URL_ARG);
-        if (argUrl == null || argUrl.isEmpty()){
-            return null;
+        String order = args.getString(ORDER);
+        if (order == null || order.isEmpty()){
+            order = "popular";
         }
 
+        Retrofit retrofit = ApiRetrofit.getRetrofit();
+        ApiInterface ApiService = retrofit.create(ApiInterface.class);
+
+        Call<ApiJsonObjectFilme> call = ApiService.getFilmes(order, BuildConfig.MYAUTH);
+
         try {
-
-            URL searchUrl = new URL(argUrl);
-            String jsonMovies;
-            jsonMovies = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-
-            if (jsonMovies != null && !jsonMovies.isEmpty()) {
-                return new MoviesProcessor().getMovies(jsonMovies);
-            }
-            else
-            {
-                return null;
+            Response<ApiJsonObjectFilme> response = call.execute();
+            if (response != null){
+                if (response.body() != null) {
+                    return response.body().getResults();
+                }
             }
 
         } catch (IOException e) {
-            Log.w(TAG,"Erro ao requirir filmes", e);
-            return null;
+            e.printStackTrace();
+
         }
+
+        return null;
+
+
     }
 
-    private ArrayList<Filme> loadFromDataBase(){
+    private Filme[] loadFromDataBase(){
 
         Cursor resultCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null,  null);
         if (resultCursor==null){
             return null;
         }
 
-        ArrayList<Filme> filmes = new ArrayList<>();
+        Filme[] filmes = new Filme[resultCursor.getCount()];
+        int cont = 0;
 
         while (resultCursor.moveToNext()){
 
@@ -107,7 +113,8 @@ public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskL
            f.setAvaliacao(resultCursor.getDouble(4));
            f.setLancamento(resultCursor.getString(5));
 
-           filmes.add(f);
+           filmes[cont] = f;
+           cont++;
 
        }
 
@@ -118,7 +125,7 @@ public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskL
     }
 
     @Override
-    public void deliverResult(@Nullable ArrayList<Filme> mFilmes) {
+    public void deliverResult(@Nullable Filme[] mFilmes) {
         this.mFilmes = mFilmes;
         super.deliverResult(mFilmes);
     }

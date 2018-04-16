@@ -3,14 +3,26 @@ package com.rcacao.mynextmovie.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 
 public class Filme implements Parcelable {
 
     private int id;
+
+    @SerializedName("poster_path")
     private String poster;
+
+    @SerializedName("original_title")
     private String titulo;
+
+    @SerializedName("overview")
     private String sinopse;
+
+    @SerializedName("vote_average")
     private Double avaliacao;
+
+    @SerializedName("release_date")
     private String lancamento;
 
     public static final String EXTRA_FILME = "filme";

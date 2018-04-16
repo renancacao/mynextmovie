@@ -63,6 +63,14 @@ public class DetalhesActivity extends AppCompatActivity implements
 
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
 
+    private static final String INSTANCE_FIRSTITEMVISIBLE_TRAILERS = "firstitemvisibletrailer";
+    private static final String INSTANCE_FIRSTITEMVISIBLE_REVIEWS = "firstitemvisiblereviews";
+    private int scrollPositionTrailer;
+    private int scrollPositionReviews;
+
+    private  LinearLayoutManager layoutManagerTrailers;
+    private LinearLayoutManager layoutManagerReviews;
+
     private MenuItem mnuFav;
 
     private TrailerAdapter trailerAdapter;
@@ -97,11 +105,11 @@ public class DetalhesActivity extends AppCompatActivity implements
         }
 
 
-        LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this);
+        layoutManagerTrailers = new LinearLayoutManager(this);
         layoutManagerTrailers.setOrientation(LinearLayoutManager.HORIZONTAL);
 
 
-        LinearLayoutManager layoutManagerReviews = new LinearLayoutManager(this);
+        layoutManagerReviews = new LinearLayoutManager(this);
         layoutManagerReviews.setOrientation(LinearLayoutManager.HORIZONTAL);
 
         //trailers ///////////////////////////
@@ -123,11 +131,30 @@ public class DetalhesActivity extends AppCompatActivity implements
         recyclerViewReviews.setAdapter(reviewAdapter);
 
         carregaFilme();
+
+        scrollPositionTrailer = 0;
+        scrollPositionReviews = 0;
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(INSTANCE_FIRSTITEMVISIBLE_TRAILERS)) {
+                scrollPositionTrailer = savedInstanceState.getInt(INSTANCE_FIRSTITEMVISIBLE_TRAILERS);
+            }
+            if (savedInstanceState.containsKey(INSTANCE_FIRSTITEMVISIBLE_REVIEWS)) {
+                scrollPositionReviews = savedInstanceState.getInt(INSTANCE_FIRSTITEMVISIBLE_REVIEWS);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(INSTANCE_FIRSTITEMVISIBLE_TRAILERS, layoutManagerTrailers.findFirstVisibleItemPosition());
+        outState.putInt(INSTANCE_FIRSTITEMVISIBLE_REVIEWS, layoutManagerReviews.findFirstVisibleItemPosition());
+        super.onSaveInstanceState(outState);
     }
 
     private void carregaFilme() {
 
-        Picasso.get().load(getPosterURL()).into(imgPoster);
+        Picasso.with(this).load(getPosterURL()).into(imgPoster);
         tTitulo.setText(filme.getTitulo());
         tAvaliacao.setText(String.valueOf(filme.getAvaliacao()));
         tLancamento.setText(filme.getLancamento());
@@ -334,6 +361,7 @@ public class DetalhesActivity extends AppCompatActivity implements
                 trailerAdapter.setTrailers(trailers);
                 trailerAdapter.notifyDataSetChanged();
                 ajustaTelaErro(false);
+                layoutManagerTrailers.scrollToPositionWithOffset(scrollPositionTrailer,0);
 
             }else{
                 ajustaTelaErro(true);
@@ -348,6 +376,8 @@ public class DetalhesActivity extends AppCompatActivity implements
                 reviewAdapter.setTrailers(reviews);
                 reviewAdapter.notifyDataSetChanged();
                 ajustaTelaErro(false);
+                layoutManagerReviews.scrollToPositionWithOffset(scrollPositionReviews,0);
+
 
             }else{
                 ajustaTelaErro(true);

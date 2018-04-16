@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.rcacao.mynextmovie.data.MovieContract.MovieEntry;
 
+import static com.rcacao.mynextmovie.data.MovieContract.MovieEntry.TABLE_NAME;
+
 public class MovieContentProvider extends ContentProvider {
 
     public static final int MOVIES = 100;
@@ -50,7 +52,7 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
 
             case MOVIES:
-                retCursor = db.query(MovieEntry.TABLE_NAME,projecao,selecao,args,null,null,sortOrder);
+                retCursor = db.query(TABLE_NAME,projecao,selecao,args,null,null,sortOrder);
                 break;
 
             default:
@@ -80,10 +82,9 @@ public class MovieContentProvider extends ContentProvider {
         switch (match){
 
             case MOVIES:
-                long id = db.insert(MovieEntry.TABLE_NAME, null, values);
-                if ( id >= 0 ) {
-                    returnUri = ContentUris.withAppendedId(MovieEntry.
-                            CONTENT_URI, id);
+                long id = db.insert(TABLE_NAME, null, values);
+                if ( id > 0 ) {
+                    returnUri = ContentUris.withAppendedId(MovieEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Falha ao inserir linha em: " + uri);
                 }
@@ -110,12 +111,12 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
 
             case MOVIES:
-                deleted = db.delete(MovieEntry.TABLE_NAME, null,null);
+                deleted = db.delete(TABLE_NAME, null,null);
             break;
 
             case MOVIES_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                deleted = db.delete(MovieEntry.TABLE_NAME,  MovieEntry._ID + "=?", new String[]{id});
+                deleted = db.delete(TABLE_NAME, "_id=?", new String[]{id});
             break;
 
             default:

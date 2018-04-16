@@ -29,9 +29,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener,  SharedPreferences.OnSharedPreferenceChangeListener,
-        android.support.v4.app.LoaderManager.LoaderCallbacks<ArrayList<Filme>>{
+        android.support.v4.app.LoaderManager.LoaderCallbacks<Filme[]>{
 
     private static final int MOVIES_LOADER = 33 ;
+
+    private static final String INSTANCE_FIRSTITEMVISIBLE = "firstitemvisible";
+    private static final String INSTANCE_ORDER = "order";
+    private int scrollPosition;
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.linearLayoutErro) LinearLayout linearLayoutErro;
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     private String order = "";
 
     private MovieAdapter adapter;
-    private ArrayList<Filme> filmes;
+    private Filme[] filmes;
 
 
     private MenuItem menuPop, menuRat, menuFav;
@@ -60,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         ButterKnife.bind(this);
 
-        order = ORDER_POPULAR;
-
         recycleViewMovies = findViewById(R.id.recycleViewMovies);
 
         //GridLayoutManager grid = new GridLayoutManager(this, Utils.getQtdColunas(this));
@@ -74,11 +76,25 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         recycleViewMovies.setLayoutManager(grid);
         recycleViewMovies.setHasFixedSize(true);
 
-        filmes = new ArrayList<>();
+        filmes = new Filme[0];
 
         adapter = new MovieAdapter(this, filmes, this);
 
         recycleViewMovies.setAdapter(adapter);
+
+
+        order = ORDER_POPULAR;
+        scrollPosition = 0;
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(INSTANCE_FIRSTITEMVISIBLE)) {
+                scrollPosition = savedInstanceState.getInt(INSTANCE_FIRSTITEMVISIBLE);
+            }
+            if (savedInstanceState.containsKey(INSTANCE_ORDER)) {
+                order = savedInstanceState.getString(INSTANCE_ORDER);
+            }
+        }
+
 
         carregoFilmes(order);
 
@@ -97,15 +113,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private void carregoFilmes(String order){
 
+
+
         boolean isonline = NetworkUtils.isOnline(this);
         Bundle queryBundle = new Bundle();
 
         if (order.equals(ORDER_POPULAR) || order.matches(ORDER_TOP_RATED)){
             if(isonline){
-                URL dbMovieUrl = NetworkUtils.buidingUrlDbMovies(order);
+
                 recycleViewMovies.setVisibility(View.VISIBLE);
                 linearLayoutErro.setVisibility(View.INVISIBLE);
-                queryBundle.putString(MoviesAsyncTaskLoader.URL_ARG, dbMovieUrl.toString());
+                queryBundle.putString(MoviesAsyncTaskLoader.ORDER, order);
                 progressBar.setVisibility(View.VISIBLE);
                 getSupportLoaderManager().restartLoader(MOVIES_LOADER, queryBundle, this);
             }
@@ -130,7 +148,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         menuRat = menu.findItem(R.id.mnuRat);
         menuFav = menu.findItem(R.id.mnuFav);
 
-        menuPop.setEnabled(false);
+        switch (order){
+
+            case ORDER_POPULAR:
+                menuPop.setEnabled(false);
+                break;
+
+            case ORDER_TOP_RATED:
+                menuRat.setEnabled(false);
+                break;
+
+            case ORDER_FAVORITOS:
+                menuFav.setEnabled(false);
+                break;
+
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -183,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         //Toast.makeText(this,String.valueOf(clickedItemIndex),Toast.LENGTH_LONG).show();
 
         Intent intent= new Intent(this, DetalhesActivity.class);
-        intent.putExtra(Filme.EXTRA_FILME, filmes.get(clickedItemIndex));
+        intent.putExtra(Filme.EXTRA_FILME, filmes[clickedItemIndex]);
 
         startActivity(intent);
 
@@ -208,19 +240,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     @NonNull
     @Override
-    public android.support.v4.content.Loader<ArrayList<Filme>> onCreateLoader(int id, @Nullable Bundle args) {
+    public android.support.v4.content.Loader<Filme[]> onCreateLoader(int id, @Nullable Bundle args) {
         return new MoviesAsyncTaskLoader(this, args);
     }
 
     @Override
-    public void onLoadFinished(@NonNull android.support.v4.content.Loader<ArrayList<Filme>> loader, ArrayList<Filme> outFilmes) {
+    public void onLoadFinished(@NonNull android.support.v4.content.Loader<Filme[]> loader, Filme[] outFilmes) {
 
         progressBar.setVisibility(View.INVISIBLE);
 
         if(outFilmes != null){
+            recycleViewMovies.setVisibility(View.VISIBLE);
+            linearLayoutErro.setVisibility(View.INVISIBLE);
             filmes = outFilmes;
             adapter.setMovies(filmes);
             adapter.notifyDataSetChanged();
+            grid.scrollToPositionWithOffset(scrollPosition,0);
+            scrollPosition = 0;
         }else{
             recycleViewMovies.setVisibility(View.INVISIBLE);
             linearLayoutErro.setVisibility(View.VISIBLE);
@@ -230,9 +266,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     }
 
     @Override
-    public void onLoaderReset(@NonNull android.support.v4.content.Loader<ArrayList<Filme>> loader) {
+    public void onLoaderReset(@NonNull android.support.v4.content.Loader<Filme[]> loader) {
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
 
+        outState.putInt(INSTANCE_FIRSTITEMVISIBLE, grid.findFirstVisibleItemPosition());
+        outState.putString(INSTANCE_ORDER, order);
+
+
+        super.onSaveInstanceState(outState);
+    }
 }

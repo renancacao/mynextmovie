@@ -8,28 +8,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.R;
+import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHolder> {
 
 
     final private ListItemClickListener mOnClickListener;
-    private ArrayList<Filme> movies;
+    private Filme[] movies;
     private final Context context;
 
 
-
-    public void setMovies(ArrayList<Filme> movies) {
+    public void setMovies(Filme[] movies) {
         this.movies = movies;
     }
 
-    public MovieAdapter(Context context, ArrayList<Filme> movies, ListItemClickListener mOnClickListener) {
+    public MovieAdapter(Context context, Filme[] movies, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.movies = movies;
         this.mOnClickListener = mOnClickListener;
@@ -51,19 +48,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
 
     @Override
     public void onBindViewHolder(@NonNull PosterViewHolder holder, int position) {
-        Picasso.get().load(getPoster(position)).into(holder.imgPoster);
+        Picasso.with(context).load(getPoster(position)).into(holder.imgPoster);
 
     }
 
     private String getPoster(int position) {
 
-        return NetworkUtils.URL_POSTER + NetworkUtils.TAMANHO + movies.get(position).getPoster();
+        return NetworkUtils.URL_POSTER + NetworkUtils.TAMANHO + movies[position].getPoster();
     }
 
     @Override
     public int getItemCount() {
         if  (movies != null){
-            return movies.size();
+            return movies.length;
         }
         else{
             return 0;

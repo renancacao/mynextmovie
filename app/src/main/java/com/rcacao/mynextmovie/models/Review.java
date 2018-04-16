@@ -3,14 +3,21 @@ package com.rcacao.mynextmovie.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Review implements Parcelable{
 
     public static final String EXTRA_REVIEW = "review";
+
+    @SerializedName("content")
     private String review;
+
+    @SerializedName("author")
     private String autor;
+
     private String id;
 
-    protected Review(Parcel in) {
+    private Review(Parcel in) {
         review = in.readString();
         autor = in.readString();
         id = in.readString();
