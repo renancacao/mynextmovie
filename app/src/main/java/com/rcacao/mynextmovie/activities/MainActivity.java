@@ -270,17 +270,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         grid.scrollToPositionWithOffset(scrollPosition,0);
+        scrollPosition = 0;
 
-    }
+    }*/
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
+        if (scrollPosition==0){
+        scrollPosition = grid.findFirstVisibleItemPosition();
+        }
         outState.putInt(INSTANCE_FIRSTITEMVISIBLE,scrollPosition);
         outState.putString(INSTANCE_ORDER, order);
         super.onSaveInstanceState(outState);
