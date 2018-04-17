@@ -11,9 +11,9 @@ public interface ApiInterface {
     Call<ApiJsonObjectFilme> getFilmes(@Path("order") String order, @Query("api_key") String apiKey);
 
     @GET("3/movie/{id}/videos")
-    Call<ApiJsonObjectFilme> getVideos(@Path("id") String id, @Query("api_key") String apiKey);
+    Call<ApiJsonObjectTrailer> getTrailers(@Path("id") String id, @Query("api_key") String apiKey);
 
     @GET("3/movie/{id}/reviews")
-    Call<ApiJsonObjectFilme> getReview(@Path("id") String id, @Query("api_key") String apiKey);
+    Call<ApiJsonObjectReview> getReviews(@Path("id") String id, @Query("api_key") String apiKey);
 
 }

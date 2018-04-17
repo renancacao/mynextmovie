@@ -1,7 +1,6 @@
 package com.rcacao.mynextmovie.api;
 
 
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

@@ -21,7 +21,7 @@ import retrofit2.Retrofit;
 public class MoviesAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<Filme[]> {
 
 
-    private Bundle args;
+    private final Bundle args;
 
     public static final String ORDER = "order";
     public static final String GET_FAVS = "getfavs" ;

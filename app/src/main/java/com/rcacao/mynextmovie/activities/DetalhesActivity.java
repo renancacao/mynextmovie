@@ -34,9 +34,6 @@ import com.rcacao.mynextmovie.models.Trailer;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
-import java.net.URL;
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,8 +73,8 @@ public class DetalhesActivity extends AppCompatActivity implements
     private TrailerAdapter trailerAdapter;
     private ReviewAdapter reviewAdapter;
 
-    private ArrayList<Trailer> trailers;
-    private ArrayList<Review> reviews;
+    private Trailer[] trailers;
+    private Review[] reviews;
 
     private Filme filme = null;
     private boolean isFavorite = false;
@@ -113,7 +110,7 @@ public class DetalhesActivity extends AppCompatActivity implements
         layoutManagerReviews.setOrientation(LinearLayoutManager.HORIZONTAL);
 
         //trailers ///////////////////////////
-        trailers = new ArrayList<>();
+        trailers = new Trailer[0];
 
         trailerAdapter = new TrailerAdapter(this, trailers, this);
         recycleViewTrailers.setLayoutManager(layoutManagerTrailers);
@@ -122,7 +119,7 @@ public class DetalhesActivity extends AppCompatActivity implements
         recycleViewTrailers.setAdapter(trailerAdapter);
 
         //reviews ////////////////////////////
-        reviews = new ArrayList<>();
+        reviews = new Review[0];
 
         reviewAdapter = new ReviewAdapter(this, reviews,this);
         recyclerViewReviews.setLayoutManager(layoutManagerReviews);
@@ -154,7 +151,7 @@ public class DetalhesActivity extends AppCompatActivity implements
 
     private void carregaFilme() {
 
-        Picasso.with(this).load(getPosterURL()).into(imgPoster);
+        Picasso.get().load(getPosterURL()).into(imgPoster);
         tTitulo.setText(filme.getTitulo());
         tAvaliacao.setText(String.valueOf(filme.getAvaliacao()));
         tLancamento.setText(filme.getLancamento());
@@ -241,9 +238,9 @@ public class DetalhesActivity extends AppCompatActivity implements
     private boolean carregoTrailers(int id){
 
         if(NetworkUtils.isOnline(this)){
-            URL url = NetworkUtils.buidingUrlTrailers(id);
+
             Bundle queryBundle = new Bundle();
-            queryBundle.putString(TrailersAsyncTaskLoader.URL_ARG,url.toString());
+            queryBundle.putString(TrailersAsyncTaskLoader.ID, String.valueOf(id));
             progressBarTrailers.setVisibility(View.VISIBLE);
             getSupportLoaderManager().restartLoader(TRAILERS_LOADER, queryBundle, this);
             return true;
@@ -257,9 +254,9 @@ public class DetalhesActivity extends AppCompatActivity implements
     private boolean carregoReviews(int id){
 
         if(NetworkUtils.isOnline(this)){
-            URL url = NetworkUtils.buidingUrlReviews(id);
+
             Bundle queryBundle = new Bundle();
-            queryBundle.putString(ReviewsAsyncTaskLoader.URL_ARG,url.toString());
+            queryBundle.putString(ReviewsAsyncTaskLoader.ID,String.valueOf(id));
             progressBarReviews.setVisibility(View.VISIBLE);
             getSupportLoaderManager().restartLoader(REVIEWS_LOADER, queryBundle, this);
             return true;
@@ -320,7 +317,7 @@ public class DetalhesActivity extends AppCompatActivity implements
     @Override
     public void onListItemClickReview(int clickedItemIndex) {
         Intent intent = new Intent(this,ReviewActivity.class);
-        intent.putExtra(Review.EXTRA_REVIEW, reviews.get(clickedItemIndex));
+        intent.putExtra(Review.EXTRA_REVIEW, reviews[clickedItemIndex]);
 
         startActivity(intent);
     }
@@ -328,7 +325,7 @@ public class DetalhesActivity extends AppCompatActivity implements
     @Override
     public void onListItemClickTrailer(int clickedItemIndex) {
 
-        String video_path =  trailers.get(clickedItemIndex).getLink();
+        String video_path =  trailers[clickedItemIndex].getLink();
         Uri uri = Uri.parse(video_path);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
@@ -357,7 +354,7 @@ public class DetalhesActivity extends AppCompatActivity implements
             progressBarTrailers.setVisibility(View.INVISIBLE);
 
             if(data != null){
-                trailers = (ArrayList<Trailer>) data;
+                trailers = (Trailer[]) data;
                 trailerAdapter.setTrailers(trailers);
                 trailerAdapter.notifyDataSetChanged();
                 ajustaTelaErro(false);
@@ -372,7 +369,7 @@ public class DetalhesActivity extends AppCompatActivity implements
             progressBarReviews.setVisibility(View.INVISIBLE);
 
             if(data != null){
-                reviews = (ArrayList<Review>) data;
+                reviews = (Review[]) data;
                 reviewAdapter.setTrailers(reviews);
                 reviewAdapter.notifyDataSetChanged();
                 ajustaTelaErro(false);

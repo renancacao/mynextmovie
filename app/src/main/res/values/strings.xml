@@ -13,7 +13,6 @@
     <string name="ops">Ops! Parece que o aplicativo não conseguiu se conectar à internet ou ao servidor!</string>
     <string name="tentar_novamente">Tentar novamente</string>
 
-    <string name="erro_ler_json">Erro ao ler JSON</string>
 
     <string name="pref_label_num_col">Número de Colunas</string>
     <string name="pref_key_num_col">num_col</string>
@@ -23,10 +22,11 @@
     <string name="reviews">Reviews</string>
 
     <string name="menu_Favoritar">Adicionar aos favoritos.</string>
-    <string name="menu_DesFavoritar">Remover dos favoritos.</string>
 
     <string name="add_favoritos">"Adicionado aos favoritos!"</string>
     <string name="remove_favoritos">"Removido dos favoritos!"</string>
-    <string name="reticencias">...</string>
+    <string name="reticencias">…</string>
+    <string name="assistir">Assistir</string>
+    <string name="n_mero_de_colunas">Número de Colunas</string>
 
 </resources>

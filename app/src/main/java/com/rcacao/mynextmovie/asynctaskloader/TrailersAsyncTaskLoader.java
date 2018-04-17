@@ -3,24 +3,26 @@ package com.rcacao.mynextmovie.asynctaskloader;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.rcacao.mynextmovie.BuildConfig;
+import com.rcacao.mynextmovie.api.ApiInterface;
+import com.rcacao.mynextmovie.api.ApiJsonObjectTrailer;
+import com.rcacao.mynextmovie.api.ApiRetrofit;
 import com.rcacao.mynextmovie.models.Trailer;
-import com.rcacao.mynextmovie.utils.NetworkUtils;
-import com.rcacao.mynextmovie.utils.TrailersProcessor;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 
-public class TrailersAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<ArrayList<Trailer>> {
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
-    private final String TAG = getClass().getName();
-    private Bundle args;
+public class TrailersAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<Trailer[]> {
 
-    public static final String URL_ARG = "url";
+    private final Bundle args;
 
-    private ArrayList<Trailer> mTrailer;
+    public static final String ID = "id";
+
+    private Trailer[] mTrailer;
 
     public TrailersAsyncTaskLoader(Context context, Bundle args) {
         super(context);
@@ -38,39 +40,43 @@ public class TrailersAsyncTaskLoader extends android.support.v4.content.AsyncTas
 
     @Nullable
     @Override
-    public ArrayList<Trailer> loadInBackground() {
+    public Trailer[] loadInBackground() {
+
 
         if (args==null){
             return null;
         }
 
-        String argUrl = args.getString(URL_ARG);
-        if (argUrl == null || argUrl.isEmpty()){
+        String id = args.getString(ID);
+        if (id==null || id.isEmpty()){
             return null;
         }
+
+        Retrofit retrofit = ApiRetrofit.getRetrofit();
+        ApiInterface ApiService = retrofit.create(ApiInterface.class);
+
+        Call<ApiJsonObjectTrailer> call = ApiService.getTrailers(id, BuildConfig.MYAUTH);
 
         try {
-            URL searchUrl = new URL(argUrl);
-            String jsonTrailers;
-            jsonTrailers = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            if (jsonTrailers != null && !jsonTrailers.isEmpty()) {
-                return new TrailersProcessor().getTrailers(jsonTrailers);
+            Response<ApiJsonObjectTrailer> response = call.execute();
+            if (response != null){
+                if (response.body() != null) {
+                    return response.body().getResults();
+                }
             }
-            else
-            {
-                return null;
-            }
+
         } catch (IOException e) {
-            Log.w( TAG, "Erro ao requirir trailers.", e);
-            return null;
+            e.printStackTrace();
+
         }
 
+        return null;
 
 
     }
 
     @Override
-    public void deliverResult(@Nullable ArrayList<Trailer> mTrailer) {
+    public void deliverResult(@Nullable Trailer[] mTrailer) {
         this.mTrailer = mTrailer;
         super.deliverResult(mTrailer);
     }

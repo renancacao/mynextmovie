@@ -23,9 +23,6 @@ public class Review implements Parcelable{
         id = in.readString();
     }
 
-    public Review(){
-
-    }
 
     public static final Creator<Review> CREATOR = new Creator<Review>() {
         @Override
@@ -43,26 +40,10 @@ public class Review implements Parcelable{
         return review;
     }
 
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getAutor() {
         return autor;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-
-    public String getId() {
-        return id;
-    }
 
     @Override
     public int describeContents() {

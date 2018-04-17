@@ -13,24 +13,22 @@ import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.models.Trailer;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerViewHolder> {
 
 
     final private ListItemClickListener mOnClickListener;
-    private ArrayList<Trailer> trailers;
+    private Trailer[] trailers;
     private final Context context;
 
 
-    public TrailerAdapter(Context context, ArrayList<Trailer> trailers, ListItemClickListener mOnClickListener) {
+    public TrailerAdapter(Context context, Trailer[] trailers, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.trailers = trailers;
         this.mOnClickListener = mOnClickListener;
     }
 
-    public void setTrailers(ArrayList<Trailer> trailers) {
+    public void setTrailers(Trailer[] trailers) {
         this.trailers = trailers;
     }
 
@@ -50,8 +48,8 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
     @Override
     public void onBindViewHolder(@NonNull TrailerViewHolder holder, int position) {
-        Picasso.with(context).load(trailers.get(position).getUrlImage()).into(holder.imgTrailer);
-        holder.tTrailer.setText(trailers.get(position).getTitulo());
+        Picasso.get().load(trailers[position].getUrlImage()).into(holder.imgTrailer);
+        holder.tTrailer.setText(trailers[position].getTitulo());
     }
 
 
@@ -59,7 +57,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     @Override
     public int getItemCount() {
         if  (trailers != null){
-            return trailers.size();
+            return trailers.length;
         }
         else{
             return 0;

@@ -21,9 +21,6 @@ import com.rcacao.mynextmovie.models.Filme;
 import com.rcacao.mynextmovie.asynctaskloader.MoviesAsyncTaskLoader;
 import com.rcacao.mynextmovie.utils.NetworkUtils;
 
-import java.net.URL;
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private static final String INSTANCE_FIRSTITEMVISIBLE = "firstitemvisible";
     private static final String INSTANCE_ORDER = "order";
+    private static final int ACT_DETALHES = 10;
+    private static final int ACT_PREFERENCES = 11;
     private int scrollPosition;
 
     @BindView(R.id.progressBar) ProgressBar progressBar;
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
             case R.id.mnuPreferencias:
                 Intent intent = new Intent(this,PreferencesActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,ACT_PREFERENCES);
 
             default:
                 break;
@@ -216,8 +215,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
         Intent intent= new Intent(this, DetalhesActivity.class);
         intent.putExtra(Filme.EXTRA_FILME, filmes[clickedItemIndex]);
+        scrollPosition =  clickedItemIndex;
 
-        startActivity(intent);
+        startActivityForResult(intent,ACT_DETALHES);
 
     }
 
@@ -271,12 +271,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        grid.scrollToPositionWithOffset(scrollPosition,0);
+
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        outState.putInt(INSTANCE_FIRSTITEMVISIBLE, grid.findFirstVisibleItemPosition());
+        outState.putInt(INSTANCE_FIRSTITEMVISIBLE,scrollPosition);
         outState.putString(INSTANCE_ORDER, order);
-
-
         super.onSaveInstanceState(outState);
+
     }
 }

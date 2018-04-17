@@ -6,8 +6,8 @@ android {
         applicationId "com.rcacao.mynextmovie"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "MYAUTH", "\"removido\""
     }
@@ -29,7 +29,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     compile 'com.android.support:preference-v7:27.1.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.picasso:picasso:2.71828'
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

@@ -3,24 +3,25 @@ package com.rcacao.mynextmovie.asynctaskloader;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.rcacao.mynextmovie.BuildConfig;
+import com.rcacao.mynextmovie.api.ApiInterface;
+import com.rcacao.mynextmovie.api.ApiJsonObjectReview;
+import com.rcacao.mynextmovie.api.ApiRetrofit;
 import com.rcacao.mynextmovie.models.Review;
-import com.rcacao.mynextmovie.utils.NetworkUtils;
-import com.rcacao.mynextmovie.utils.ReviewsProcessor;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 
-public class ReviewsAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<ArrayList<Review>> {
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
-    private final String TAG = getClass().getName();
-    private Bundle args;
+public class ReviewsAsyncTaskLoader extends android.support.v4.content.AsyncTaskLoader<Review[]> {
 
-    public static final String URL_ARG = "url";
+    public static final String ID = "id" ;
+    private final Bundle args;
 
-    private ArrayList<Review> mReviews;
+    private Review[] mReviews;
 
     public ReviewsAsyncTaskLoader(Context context, Bundle args){
         super(context);
@@ -38,40 +39,43 @@ public class ReviewsAsyncTaskLoader extends android.support.v4.content.AsyncTask
 
     @Nullable
     @Override
-    public ArrayList<Review> loadInBackground() {
+    public Review[] loadInBackground() {
 
         if (args==null){
             return null;
         }
 
-        String argUrl = args.getString(URL_ARG);
-        if (argUrl == null || argUrl.isEmpty()){
+        String id = args.getString(ID);
+        if (id==null || id.isEmpty()){
             return null;
         }
 
+        Retrofit retrofit = ApiRetrofit.getRetrofit();
+        ApiInterface ApiService = retrofit.create(ApiInterface.class);
+
+        Call<ApiJsonObjectReview> call = ApiService.getReviews(id, BuildConfig.MYAUTH);
 
         try {
-            URL searchUrl = new URL(argUrl);
-            String jsonReviews;
-            jsonReviews = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            if (jsonReviews != null && !jsonReviews.isEmpty()) {
-                return new ReviewsProcessor().getReviews(jsonReviews);
+            Response<ApiJsonObjectReview> response = call.execute();
+            if (response != null){
+                if (response.body() != null) {
+                    return response.body().getResults();
+                }
             }
-            else
-            {
-                return null;
-            }
+
         } catch (IOException e) {
-            Log.w(TAG,"Erro ao requirir reviews.", e);
-           return null;
+            e.printStackTrace();
+
         }
+
+        return null;
 
 
 
     }
 
     @Override
-    public void deliverResult(@Nullable ArrayList<Review> mReviews) {
+    public void deliverResult(@Nullable Review[] mReviews) {
         this.mReviews = mReviews;
         super.deliverResult(mReviews);
     }

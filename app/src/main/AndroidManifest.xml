@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.rcacao.mynextmovie">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -35,8 +34,9 @@
             android:authorities="com.rcacao.mynextmovie"
             android:exported="false" />
 
-        <activity android:name=".activities.ReviewActivity"
-            android:parentActivityName=".activities.DetalhesActivity"></activity>
+        <activity
+            android:name=".activities.ReviewActivity"
+            android:parentActivityName=".activities.DetalhesActivity" />
 
     </application>
 

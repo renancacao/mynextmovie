@@ -11,13 +11,11 @@ import android.widget.TextView;
 import com.rcacao.mynextmovie.R;
 import com.rcacao.mynextmovie.models.Review;
 
-import java.util.ArrayList;
-
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
     final private ListItemClickListener mOnClickListener;
-    private ArrayList<Review> reviews;
+    private Review[] reviews;
     private final Context context;
 
     private final int TAMANHO_MAXIMO = 200;
@@ -26,13 +24,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         void onListItemClickReview(int clickedItemIndex);
     }
 
-    public ReviewAdapter(Context context, ArrayList<Review> reviews, ListItemClickListener mOnClickListener) {
+    public ReviewAdapter(Context context, Review[] reviews, ListItemClickListener mOnClickListener) {
         this.context = context;
         this.reviews = reviews;
         this.mOnClickListener = mOnClickListener;
     }
 
-    public void setTrailers(ArrayList<Review> reviews) {
+    public void setTrailers(Review[] reviews) {
         this.reviews = reviews;
     }
 
@@ -50,21 +48,21 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
 
 
-        if (reviews.get(position).getReview().length()>TAMANHO_MAXIMO){
+        if (reviews[position].getReview().length()>TAMANHO_MAXIMO){
             holder.tReview.setText(
-                    resumeReview(reviews.get(position).getReview()
+                    resumeReview(reviews[position].getReview()
                             .replace("\n","").replace("\r", "")));
             holder.tReticencia.setVisibility(View.VISIBLE);
         }
         else
         {
-            holder.tReview.setText(reviews.get(position).getReview()
+            holder.tReview.setText(reviews[position].getReview()
                     .replace("\n","").replace("\r", ""));
             holder.tReticencia.setVisibility(View.INVISIBLE);
         }
 
 
-        holder.tAutor.setText(reviews.get(position).getAutor());
+        holder.tAutor.setText(reviews[position].getAutor());
     }
 
 
@@ -72,7 +70,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @Override
     public int getItemCount() {
         if  (reviews != null){
-            return reviews.size();
+            return reviews.length;
         }
         else{
             return 0;
@@ -103,7 +101,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     private String resumeReview(String text){
 
 
-        return text.substring(0,TAMANHO_MAXIMO-1);
+        return text.substring(0,Math.min(TAMANHO_MAXIMO-1,text.length()-1));
 
 
     }
